@@ -1,0 +1,26 @@
+# Remote action to execute e2e functional tests
+
+name: E2E Functional Tests
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  repository_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      branch:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'branch to run the tests on'
+        # Default value if no value is explicitly provided
+        default: 'main'
+        # Input has to be provided for the workflow to run
+        required: true
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  functional-test:
+    runs-on: macos-latest
+
+    steps:
+    - name: Execute functional tests
+      run: echo "Triggered remotely"
