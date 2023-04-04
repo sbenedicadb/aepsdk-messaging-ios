@@ -91,4 +91,15 @@ import UserNotifications
 
         MobileCore.dispatch(event: event)
     }
+    
+    static func getFeeds(_ completion: @escaping (([String: Feed]?) -> Void)) {
+        let event = Event(name: "testing feedzzzz",
+                          type: "messaging",
+                          source: "getFEEEEDZZZZZ",
+                          data: nil)
+        
+        MobileCore.dispatch(event: event) { event in
+            completion(event?.data?["feeds"] as? [String: Feed])
+        }
+    }
 }

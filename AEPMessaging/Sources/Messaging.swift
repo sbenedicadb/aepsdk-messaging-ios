@@ -30,6 +30,7 @@ public class Messaging: NSObject, Extension {
     private var initialLoadComplete = false
     private(set) var currentMessage: Message?
     private let rulesEngine: MessagingRulesEngine
+    private let feedRulesEngine: FeedRulesEngine
 
     // MARK: - Extension protocol methods
 
@@ -37,6 +38,8 @@ public class Messaging: NSObject, Extension {
         self.runtime = runtime
         rulesEngine = MessagingRulesEngine(name: MessagingConstants.RULES_ENGINE_NAME,
                                            extensionRuntime: runtime)
+        feedRulesEngine = FeedRulesEngine(name: "feed rules engine", extensionRuntime: runtime)
+        
         super.init()
         rulesEngine.loadCachedPropositions(for: appSurface)
     }
@@ -47,6 +50,7 @@ public class Messaging: NSObject, Extension {
         self.runtime = runtime
         self.rulesEngine = rulesEngine
         self.rulesEngine.loadCachedPropositions(for: expectedScope)
+        self.feedRulesEngine = FeedRulesEngine(name: "feed rules engine", extensionRuntime: runtime)
 
         super.init()
     }
@@ -76,8 +80,27 @@ public class Messaging: NSObject, Extension {
         registerListener(type: EventType.edge,
                          source: MessagingConstants.Event.Source.PERSONALIZATION_DECISIONS,
                          listener: handleEdgePersonalizationNotification)
+        
+        // get feeds from the rules engine
+        registerListener(type: "messaging",
+                         source: "getFEEEEDZZZZZ",
+                         listener: getFeeeeddddzzz)
     }
 
+    private func getFeeeeddddzzz(_ event: Event) {
+        // gets past "waitingEvents" in rules engine
+        let reprocessEvent = Event(name: "feed rules engine",
+                                   type: EventType.rulesEngine,
+                                   source: EventSource.requestReset,
+                                   data: ["name": "feed rules engine"])
+        feedRulesEngine.process(event: reprocessEvent)
+    
+        feedRulesEngine.process(event: event) { feeds in
+            let responseEvent = event.createResponseEvent(name: "your feeds here", type: "feed", source: "feed", data: ["feeds": feeds ?? [:]])
+            self.runtime.dispatch(event: responseEvent)
+        }
+    }
+    
     public func onUnregistered() {
         Log.debug(label: MessagingConstants.LOG_TAG, "Extension unregistered from MobileCore: \(MessagingConstants.FRIENDLY_NAME)")
     }
@@ -193,6 +216,7 @@ public class Messaging: NSObject, Extension {
                  
         Log.trace(label: MessagingConstants.LOG_TAG, "Loading in-app message definitions from personalization:decisions network response.")
         rulesEngine.loadPropositions(event.payload, clearExisting: clearExistingRules, expectedScope: appSurface)
+        feedRulesEngine.loadFeeds(event.payload, clearExisting: true)
     }
 
     /// Handles Rules Consequence events containing message definitions.

@@ -44,6 +44,20 @@ class ViewController: UIViewController {
     @IBAction func triggerBannerBottom(_: Any) {
         MobileCore.track(action: "modalTakeoverGestures", data: nil)
     }
+    
+    @IBAction func testFeed(_: Any) {
+        Messaging.getFeeds() { feeds in
+            guard let feeds = feeds else {
+                print("no feeds returned")
+                return
+            }
+            
+            print("i got feeds back!")
+            for feed in feeds {
+                print(feed)
+            }
+        }
+    }
 
     /// Messaging delegate
     private class MessageHandler: MessagingDelegate {

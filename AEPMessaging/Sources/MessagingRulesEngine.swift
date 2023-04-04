@@ -66,6 +66,10 @@ class MessagingRulesEngine {
                     continue
                 }
                 
+                if rule.first?.consequences.first?.isFeedItem ?? false {
+                    continue
+                }
+                
                 // pre-fetch the assets for this message if there are any defined
                 cacheRemoteAssetsFor(rule)
                 

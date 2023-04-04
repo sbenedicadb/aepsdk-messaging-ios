@@ -16,6 +16,9 @@ import Foundation
 @objc(AEPFeedItem)
 @objcMembers
 public class FeedItem: NSObject, Codable {
+    
+    private var scopeDetailsInternal: [String: Any] = [:]
+    
     /// Plain-text title for the feed item
     public var title: String
     
@@ -40,6 +43,18 @@ public class FeedItem: NSObject, Codable {
     /// Contains additional key-value pairs associated with this feed item
     public var meta: [String: Any]?
     
+    public var type: String?
+    
+    /// Contains scope details for reporting
+    public internal(set) var scopeDetails: [String: Any] {
+        set(newScopeDetails) {
+            scopeDetailsInternal = newScopeDetails
+        }
+        get {
+            return scopeDetailsInternal
+        }
+    }
+    
     public init(title: String, body: String, imageUrl: String? = nil, actionUrl: String? = nil, actionTitle: String? = nil, publishedDate: Int, expiryDate: Int, meta: [String : Any]? = nil) {
         self.title = title
         self.body = body
@@ -60,6 +75,7 @@ public class FeedItem: NSObject, Codable {
         case publishedDate
         case expiryDate
         case meta
+        case type
     }
     
     public required init(from decoder: Decoder) throws {
@@ -79,6 +95,21 @@ public class FeedItem: NSObject, Codable {
             }
             return value
         }
+        
+        type = try? values.decode(String.self, forKey: .type)
+    }
+    
+    public override var debugDescription: String {
+        return """
+title: \(title)
+body: \(body)
+imageUrl: \(imageUrl ?? "")
+actionUrl: \(actionUrl ?? "")
+actionTitle: \(actionTitle ?? "")
+publishedDate: \(publishedDate)
+expiryDate: \(expiryDate)
+meta: \(String(describing:meta))
+"""
     }
 }
 
@@ -88,11 +119,30 @@ extension FeedItem {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(title, forKey: .title)
         try container.encode(body, forKey: .body)
+        try? container.encode(type, forKey: .type)
         try? container.encode(imageUrl, forKey: .imageUrl)
         try? container.encode(actionUrl, forKey: .actionUrl)
         try? container.encode(actionTitle, forKey: .actionTitle)
         try container.encode(publishedDate, forKey: .publishedDate)
         try container.encode(expiryDate, forKey: .expiryDate)        
         try? container.encode(AnyCodable.from(dictionary: meta) , forKey: .meta)
+    }
+    
+    static func from(data: [String: Any]?) -> FeedItem? {
+        guard data != nil, let jsonData = try? JSONSerialization.data(withJSONObject: data as Any) else {
+            return nil
+        }
+        
+        return try? JSONDecoder().decode(FeedItem.self, from: jsonData)
+    }
+}
+
+extension FeedItem {
+    var surface: String? {
+        meta?["surface"] as? String
+    }
+    
+    var feedName: String? {
+        meta?["feedName"] as? String
     }
 }

@@ -24,4 +24,19 @@ public class Feed: NSObject, Codable {
     
     /// Array of `FeedItem` that are members of this `Feed`
     public var items: [FeedItem]
+    
+    public init(surfaceUri: String, items: [FeedItem]) {
+        self.surfaceUri = surfaceUri
+        self.items = items
+        self.name = self.items.first?.meta?["name"] as? String ?? ""
+    }
+    
+    public override var debugDescription: String {
+        return """
+\(self):
+    name: \(name)
+    surfaceUri: \(surfaceUri)
+    items: \(items)
+"""        
+    }
 }

@@ -28,7 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         MobileCore.setLogLevel(.trace)
 
         let extensions = [
-            Consent.self,
+//            Consent.self,
             Lifecycle.self,
             Identity.self,
             Messaging.self,
@@ -45,13 +45,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
                 }
             }
             
+            /// Org - CJM Stage - AJO Web (VA7) sandbox
+            /// Tag name - sb_stage
+            /// App Surface - sb_stage_surface (com.steveb.iamStagingTester)
+            
+            
             // configure
-            MobileCore.configureWith(appId: "")
-            // set `messaging.useSandbox` to "true"  to test push notifications in debug environment (Apps signed with Development Certificate)
-            #if DEBUG
-                let debugConfig = ["messaging.useSandbox": true]
-                MobileCore.updateConfigurationWith(configDict: debugConfig)
-            #endif
+            MobileCore.configureWith(appId: "staging/1b50a869c4a2/bcd1a623883f/launch-e44d085fc760-development")
+            let stagingConfig = [
+                "edge.environment": "int"
+            ]
+            MobileCore.updateConfigurationWith(configDict: stagingConfig)
+            
         }
         
         registerForPushNotifications(application)
@@ -131,4 +136,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // Always call the completion handler when done.
         completionHandler()
     }
+    
 }
