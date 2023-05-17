@@ -18,8 +18,12 @@ import Foundation
 extension Event {
     // MARK: - In-app Message Consequence Event Handling
 
-    var isInAppMessage: Bool {
-        consequenceType == MessagingConstants.ConsequenceTypes.IN_APP_MESSAGE
+    var isCjmIamConsequence: Bool {
+        consequenceType == MessagingConstants.ConsequenceTypes.CJM_IAM
+    }
+    
+    var isAjoInboundConsequence: Bool {
+        consequenceType == MessagingConstants.ConsequenceTypes.AJO_INBOUND
     }
 
     // MARK: - In-app Message Properties
@@ -33,6 +37,8 @@ extension Event {
         details?[MessagingConstants.Event.Data.Key.IAM.TEMPLATE] as? String
     }
 
+    // MARK: - Fullscreen properties
+    
     var html: String? {
         details?[MessagingConstants.Event.Data.Key.IAM.HTML] as? String
     }
@@ -40,7 +46,7 @@ extension Event {
     var remoteAssets: [String]? {
         details?[MessagingConstants.Event.Data.Key.IAM.REMOTE_ASSETS] as? [String]
     }
-
+        
     /// sample `mobileParameters` json which gets represented by a `MessageSettings` object:
     /// {
     ///     "mobileParameters": {
@@ -311,5 +317,69 @@ extension Event {
 
     var adobeXdm: [String: Any]? {
         data?[MessagingConstants.XDM.Key.ADOBE_XDM] as? [String: Any]
+    }
+}
+
+// MARK: - AJO Inbound properties
+extension Event {
+    var inboundType: String? {
+        details?["type"] as? String
+    }
+    
+    var expiryDate: Date? {
+        guard let expiryMilliseconds = details?["expiryDate"] as? Int64 else {
+            return nil
+        }
+        
+        return Date(milliseconds: expiryMilliseconds)
+    }
+    
+    var meta: [String: Any]? {
+        details?["meta"] as? [String: Any]
+    }
+    
+    var content: [String: Any]? {
+        details?["content"] as? [String: Any]
+    }
+    
+    var contentType: String? {
+        details?["contentType"] as? String
+    }
+}
+
+// MARK: - Native Alert properties
+extension Event {
+    var alertTitle: String? {
+        content?["title"] as? String
+    }
+
+    var alertMessage: String? {
+        content?["message"] as? String
+    }
+    
+    var alertDefaultButton: String? {
+        content?["defaultButton"] as? String
+    }
+    
+    var nativeAlertDefaultActionUrl: String? {
+        content?["defaultButtonUrl"] as? String
+    }
+    
+    var nativeAlertCancelButton: String? {
+        content?["cancelButton"] as? String
+    }
+    
+    var nativeAlertCancelActionUrl: String? {
+        content?["cancelButtonUrl"] as? String
+    }
+    
+    var nativeAlertStyle: String? {
+        content?["style"] as? String
+    }
+}
+
+extension Date {
+    init(milliseconds: Int64) {
+        self = Date(timeIntervalSince1970: TimeInterval(milliseconds) / 1000)
     }
 }

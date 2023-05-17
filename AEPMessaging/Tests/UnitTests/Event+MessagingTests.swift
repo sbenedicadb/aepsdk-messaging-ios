@@ -51,12 +51,12 @@ class EventPlusMessagingTests: XCTestCase {
     // MARK: - Helpers
 
     /// Gets an event to use for simulating a rules consequence
-    func getRulesResponseEvent(type: String? = MessagingConstants.ConsequenceTypes.IN_APP_MESSAGE,
+    func getRulesResponseEvent(type: String? = MessagingConstants.ConsequenceTypes.CJM_IAM,
                                triggeredConsequence: [String: Any]? = nil,
                                removeDetails: [String]? = nil) -> Event {
 
         // details are the same for postback and pii, different for open url
-        var details = type == MessagingConstants.ConsequenceTypes.IN_APP_MESSAGE ? [
+        var details = type == MessagingConstants.ConsequenceTypes.CJM_IAM ? [
             MessagingConstants.Event.Data.Key.IAM.TEMPLATE: MessagingConstants.Event.Data.Values.IAM.FULLSCREEN,
             MessagingConstants.Event.Data.Key.IAM.HTML: testHtml,
             MessagingConstants.Event.Data.Key.IAM.REMOTE_ASSETS: testAssets
@@ -215,10 +215,10 @@ class EventPlusMessagingTests: XCTestCase {
 
     func testInAppMessageConsequenceType() throws {
         // setup
-        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.IN_APP_MESSAGE)
+        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.CJM_IAM)
 
         // verify
-        XCTAssertTrue(event.isInAppMessage)
+        XCTAssertTrue(event.isCjmIamConsequence)
     }
 
     func testInAppMessageMessageId() throws {
@@ -231,7 +231,7 @@ class EventPlusMessagingTests: XCTestCase {
 
     func testInAppMessageTemplate() throws {
         // setup
-        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.IN_APP_MESSAGE)
+        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.CJM_IAM)
 
         // verify
         XCTAssertEqual(MessagingConstants.Event.Data.Values.IAM.FULLSCREEN, event.template!)
@@ -239,7 +239,7 @@ class EventPlusMessagingTests: XCTestCase {
 
     func testInAppMessageHtml() throws {
         // setup
-        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.IN_APP_MESSAGE)
+        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.CJM_IAM)
 
         // verify
         XCTAssertEqual(testHtml, event.html!)
@@ -247,7 +247,7 @@ class EventPlusMessagingTests: XCTestCase {
 
     func testInAppMessageAssets() throws {
         // setup
-        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.IN_APP_MESSAGE)
+        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.CJM_IAM)
 
         // verify
         XCTAssertEqual(2, event.remoteAssets!.count)
@@ -358,7 +358,7 @@ class EventPlusMessagingTests: XCTestCase {
 
     func testInAppMessageObjectValidation() throws {
         // setup
-        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.IN_APP_MESSAGE)
+        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.CJM_IAM)
 
         // verify
         XCTAssertTrue(event.containsValidInAppMessage)
@@ -381,10 +381,10 @@ class EventPlusMessagingTests: XCTestCase {
             MessagingConstants.Event.Data.Key.ID: UUID().uuidString,
             MessagingConstants.Event.Data.Key.DETAIL: [:]
         ]
-        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.IN_APP_MESSAGE, triggeredConsequence: triggeredConsequence)
+        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.CJM_IAM, triggeredConsequence: triggeredConsequence)
 
         // verify
-        XCTAssertFalse(event.isInAppMessage)
+        XCTAssertFalse(event.isCjmIamConsequence)
         XCTAssertNil(event.template)
         XCTAssertNil(event.html)
         XCTAssertNil(event.remoteAssets)
@@ -396,10 +396,10 @@ class EventPlusMessagingTests: XCTestCase {
             MessagingConstants.Event.Data.Key.ID: UUID().uuidString,
             MessagingConstants.Event.Data.Key.DETAIL: [:]
         ]
-        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.IN_APP_MESSAGE, triggeredConsequence: triggeredConsequence)
+        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.CJM_IAM, triggeredConsequence: triggeredConsequence)
 
         // verify
-        XCTAssertFalse(event.isInAppMessage)
+        XCTAssertFalse(event.isCjmIamConsequence)
         XCTAssertNil(event.template)
         XCTAssertNil(event.html)
         XCTAssertNil(event.remoteAssets)
@@ -408,14 +408,14 @@ class EventPlusMessagingTests: XCTestCase {
     func testMissingValuesInDetails() throws {
         // setup
         let triggeredConsequence: [String: Any] = [
-            MessagingConstants.Event.Data.Key.TYPE: MessagingConstants.ConsequenceTypes.IN_APP_MESSAGE,
+            MessagingConstants.Event.Data.Key.TYPE: MessagingConstants.ConsequenceTypes.CJM_IAM,
             MessagingConstants.Event.Data.Key.ID: UUID().uuidString,
             MessagingConstants.Event.Data.Key.DETAIL: ["unintersting": "data"]
         ]
-        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.IN_APP_MESSAGE, triggeredConsequence: triggeredConsequence)
+        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.CJM_IAM, triggeredConsequence: triggeredConsequence)
 
         // verify
-        XCTAssertTrue(event.isInAppMessage)
+        XCTAssertTrue(event.isCjmIamConsequence)
         XCTAssertNil(event.template)
         XCTAssertNil(event.html)
         XCTAssertNil(event.remoteAssets)
@@ -424,13 +424,13 @@ class EventPlusMessagingTests: XCTestCase {
     func testNoDetails() throws {
         // setup
         let triggeredConsequence: [String: Any] = [
-            MessagingConstants.Event.Data.Key.TYPE: MessagingConstants.ConsequenceTypes.IN_APP_MESSAGE,
+            MessagingConstants.Event.Data.Key.TYPE: MessagingConstants.ConsequenceTypes.CJM_IAM,
             MessagingConstants.Event.Data.Key.ID: UUID().uuidString
         ]
-        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.IN_APP_MESSAGE, triggeredConsequence: triggeredConsequence)
+        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.CJM_IAM, triggeredConsequence: triggeredConsequence)
 
         // verify
-        XCTAssertTrue(event.isInAppMessage)
+        XCTAssertTrue(event.isCjmIamConsequence)
         XCTAssertNil(event.template)
         XCTAssertNil(event.html)
         XCTAssertNil(event.remoteAssets)
@@ -439,7 +439,7 @@ class EventPlusMessagingTests: XCTestCase {
     func testInAppMessageObjectValidationNoRemoteAssets() throws {
         // setup
         let keysToRemove = [MessagingConstants.Event.Data.Key.IAM.REMOTE_ASSETS]
-        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.IN_APP_MESSAGE, removeDetails: keysToRemove)
+        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.CJM_IAM, removeDetails: keysToRemove)
 
         // verify
         XCTAssertNil(event.remoteAssets)
@@ -449,7 +449,7 @@ class EventPlusMessagingTests: XCTestCase {
     func testInAppMessageObjectValidationNoTemplate() throws {
         // setup
         let keysToRemove = [MessagingConstants.Event.Data.Key.IAM.TEMPLATE]
-        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.IN_APP_MESSAGE, removeDetails: keysToRemove)
+        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.CJM_IAM, removeDetails: keysToRemove)
 
         // verify
         XCTAssertNil(event.template)
@@ -459,7 +459,7 @@ class EventPlusMessagingTests: XCTestCase {
     func testInAppMessageObjectValidationNoHtml() throws {
         // setup
         let keysToRemove = [MessagingConstants.Event.Data.Key.IAM.HTML]
-        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.IN_APP_MESSAGE, removeDetails: keysToRemove)
+        let event = getRulesResponseEvent(type: MessagingConstants.ConsequenceTypes.CJM_IAM, removeDetails: keysToRemove)
 
         // verify
         XCTAssertNil(event.html)

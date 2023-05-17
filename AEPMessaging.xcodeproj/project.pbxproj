@@ -122,6 +122,8 @@
 		24B071BA29072EBF00F4B18A /* AEPMessaging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925DF4A525227C4700A5DE31 /* AEPMessaging.framework */; };
 		24B3413728F724CB00D07FB1 /* AEPMessaging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925DF4A525227C4700A5DE31 /* AEPMessaging.framework */; };
 		24B3413828F724CB00D07FB1 /* AEPMessaging.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 925DF4A525227C4700A5DE31 /* AEPMessaging.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		24EA13BB2A155CFF009792CD /* Message+NativeAlertListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24EA13BA2A155CFF009792CD /* Message+NativeAlertListener.swift */; };
+		24EA13BD2A15902C009792CD /* HtmlMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24EA13BC2A15902C009792CD /* HtmlMessage.swift */; };
 		24EE301E28FF61F0005E417C /* InAppMessagingEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24EE301D28FF61F0005E417C /* InAppMessagingEventTests.swift */; };
 		2B2B7A6E0F7CD6312D28421A /* Pods_FunctionalTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD29CE4BC879CE75AFEFF0D5 /* Pods_FunctionalTests.framework */; };
 		44DFBD558578CFDCD4A9A476 /* Pods_E2EFunctionalTestApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A44BD44CB3A7DA5EBB972652 /* Pods_E2EFunctionalTestApp.framework */; };
@@ -373,6 +375,8 @@
 		24B071B029072E9900F4B18A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		24B071B329072E9900F4B18A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		24B071B529072E9900F4B18A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		24EA13BA2A155CFF009792CD /* Message+NativeAlertListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+NativeAlertListener.swift"; sourceTree = "<group>"; };
+		24EA13BC2A15902C009792CD /* HtmlMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HtmlMessage.swift; sourceTree = "<group>"; };
 		24EE301D28FF61F0005E417C /* InAppMessagingEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagingEventTests.swift; sourceTree = "<group>"; };
 		28E46BC7A8F3939CF2DDDC8F /* Pods_MessagingDemoAppObjC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MessagingDemoAppObjC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		38F4A4735D3FB26229C244BC /* Pods-MessagingDemoApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MessagingDemoApp.release.xcconfig"; path = "Target Support Files/Pods-MessagingDemoApp/Pods-MessagingDemoApp.release.xcconfig"; sourceTree = "<group>"; };
@@ -648,8 +652,10 @@
 				923155762620FC53004AE7D3 /* Event+Messaging.swift */,
 				246FD07126B9F86F00FD130B /* FullscreenMessage+Message.swift */,
 				243B1B0128B411890074327E /* ItemData.swift */,
+				24EA13BC2A15902C009792CD /* HtmlMessage.swift */,
 				244E9583268262C7001DC957 /* Message.swift */,
 				244C2BDD26B36A4B008F086A /* Message+FullscreenMessageDelegate.swift */,
+				24EA13BA2A155CFF009792CD /* Message+NativeAlertListener.swift */,
 				92315436261E3B36004AE7D3 /* Messaging.swift */,
 				244E954A267BAEBE001DC957 /* Messaging+EdgeEvents.swift */,
 				92315434261E3B36004AE7D3 /* Messaging+PublicAPI.swift */,
@@ -1534,10 +1540,12 @@
 				244E9555267BB018001DC957 /* String+JSON.swift in Sources */,
 				245059982673F94D00CC7CA0 /* MessagingConstants.swift in Sources */,
 				246FD07226B9F86F00FD130B /* FullscreenMessage+Message.swift in Sources */,
+				24EA13BD2A15902C009792CD /* HtmlMessage.swift in Sources */,
 				243B1B0228B411890074327E /* ItemData.swift in Sources */,
 				243B1AFC28AD7FCE0074327E /* PropositionPayload.swift in Sources */,
 				243B1AFE28AEB1E60074327E /* PropositionInfo.swift in Sources */,
 				240F71FB26868F7100846587 /* SharedStateResult+Messaging.swift in Sources */,
+				24EA13BB2A155CFF009792CD /* Message+NativeAlertListener.swift in Sources */,
 				2469A5E3274863F600E56457 /* MessagingRulesEngine+Caching.swift in Sources */,
 				244E954B267BAEBE001DC957 /* Messaging+EdgeEvents.swift in Sources */,
 				245059522671283F00CC7CA0 /* MessagingRulesEngine.swift in Sources */,

@@ -75,6 +75,8 @@ public class Messaging: NSObject, Extension {
         registerListener(type: EventType.edge,
                          source: MessagingConstants.Event.Source.PERSONALIZATION_DECISIONS,
                          listener: handleEdgePersonalizationNotification)
+        
+//        testAlert()
     }
 
     public func onUnregistered() {
@@ -184,7 +186,7 @@ public class Messaging: NSObject, Extension {
             return
         }
 
-        if event.isInAppMessage, event.containsValidInAppMessage {
+        if (event.isCjmIamConsequence && event.containsValidInAppMessage) || event.isAjoInboundConsequence {
             showMessageForEvent(event)
         } else {
             Log.warning(label: MessagingConstants.LOG_TAG, "Unable to process In-App Message - html property is required.")
@@ -195,8 +197,8 @@ public class Messaging: NSObject, Extension {
     /// Creates and shows a fullscreen message as defined by the contents of the provided `Event`'s data.
     /// - Parameter event: the `Event` containing data necessary to create the message and report on it
     private func showMessageForEvent(_ event: Event) {
-        guard event.html != nil else {
-            Log.debug(label: MessagingConstants.LOG_TAG, "Unable to show message for event \(event.id) - it contains no HTML defining the message.")
+        guard event.isCjmIamConsequence || event.isAjoInboundConsequence else {
+            Log.debug(label: MessagingConstants.LOG_TAG, "Unable to show message for event \(event.id) - it does not contain a valid definition.")
             return
         }
 
@@ -292,4 +294,31 @@ public class Messaging: NSObject, Extension {
         lastProcessedRequestEventId = newId
     }
     #endif
+    
+    private func testAlert() {
+        let testPayload: [String: Any] = [
+            "title": "a title",
+            "message": "a message",
+            "defaultButton": "ok!",
+            "defaultButtonUrl": "https://adobe.com",
+            "cancelButton": "no thanks...",
+            "style": 0
+        ]
+        
+        let listener = AlertListener()
+        
+        if let jsonData = try? JSONSerialization.data(withJSONObject: testPayload, options: .prettyPrinted) {
+            let nativeAlert = ServiceProvider.shared.uiService.createNativeAlert(jsonData: jsonData, listener: listener, settings: MessageSettings(parent: self))
+            nativeAlert?.show()
+        }
+    }
+    
+    class AlertListener: NativeAlertListener {
+        func onAlertAction(_ action: UIAlertAction, forMessage message: NativeAlert) {
+            print("action: \(action.title ?? "<no title>") for message: \(message.debugDescription)")
+        }
+        func onShow(message: NativeAlert) {
+            print("onShow: \(message)")
+        }
+    }
 }

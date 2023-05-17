@@ -562,7 +562,7 @@ class MessagingTests: XCTestCase {
         }
         return [
             MessagingConstants.Event.Data.Key.TRIGGERED_CONSEQUENCE: [
-                MessagingConstants.Event.Data.Key.TYPE: MessagingConstants.ConsequenceTypes.IN_APP_MESSAGE,
+                MessagingConstants.Event.Data.Key.TYPE: MessagingConstants.ConsequenceTypes.CJM_IAM,
                 MessagingConstants.Event.Data.Key.DETAIL: detailDictionary
             ]
         ]

@@ -34,7 +34,8 @@ class ViewController: UIViewController {
     }
 
     @IBAction func triggerModal(_: Any) {
-        MobileCore.track(action: "triggerModal", data: ["testModal": "true"])
+        MobileCore.track(action: "nativeAlert", data: nil)
+//        MobileCore.track(action: "triggerModal", data: ["testModal": "true"])
     }
 
     @IBAction func triggerBannerTop(_: Any) {

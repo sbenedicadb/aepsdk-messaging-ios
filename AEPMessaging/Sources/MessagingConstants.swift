@@ -30,7 +30,8 @@ enum MessagingConstants {
     }
 
     enum ConsequenceTypes {
-        static let IN_APP_MESSAGE = "cjmiam"
+        static let CJM_IAM = "cjmiam"
+        static let AJO_INBOUND = "ajoInbound"
     }
 
     enum Event {
