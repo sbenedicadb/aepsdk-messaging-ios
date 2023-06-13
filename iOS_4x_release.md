@@ -1,5 +1,7 @@
 # Aligning major version releases for the Adobe Experience Platform Mobile SDKs for iOS
 
+![User on their phone](./AdobeStock_303765617.jpeg)
+
 ## Why are we getting another major update already?
 
 Apple has added an annual requirement of increasing the minimum version of Xcode used when [submitting to the App Store](https://developer.apple.com/ios/submit/). Each Xcode version only supports back to a specific minimum version of iOS. Loosely speaking, the [Xcode version and _minimum_ iOS version are correlated](https://developer.apple.com/support/xcode/). 
@@ -23,6 +25,8 @@ In order to achieve our goal of unifying major versions, AEPEdge (and a handful 
 ## What will happen with new extensions?
 
 A new extension - that is, an extension getting its first public release - will be released with the same major version as AEPCore. As part of this major update we are introducing a new extension, AEPEdgeMedia. As you would expect, the first version of this extension is 4.0.0.
+
+![User on their phone and laptop](./AdobeStock_165249622.jpeg)
 
 ## Do I have to reimplement the SDK?
 
