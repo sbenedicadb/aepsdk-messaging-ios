@@ -27,7 +27,7 @@ class MessagingRulesEngine {
         runtime = extensionRuntime
         rulesEngine = LaunchRulesEngine(name: name,
                                         extensionRuntime: extensionRuntime)
-        cache = Cache(name: MessagingConstants.Caches.CACHE_NAME)        
+        cache = Cache(name: MessagingConstants.Caches.CACHE_NAME)
     }
 
     /// INTERNAL ONLY
@@ -48,7 +48,6 @@ class MessagingRulesEngine {
         
         let decoder = JSONDecoder()
         let testPayload = try! decoder.decode(PropositionPayload.self, from: PROP_PAYLOAD_JSON.data(using: .utf8)!)
-                
                 
         var rules: [LaunchRule] = []
         var tempPropInfo: [String: PropositionInfo] = [:]
@@ -96,7 +95,7 @@ class MessagingRulesEngine {
         } else {
             Log.trace(label: MessagingConstants.LOG_TAG, "Ignoring request to load in-app messages for scope '\(expectedScope)'. The propositions parameter provided was empty.")
         }
-        
+
         if persistChanges {
             addPropositionsToCache(propositions)
         } else {
@@ -105,23 +104,23 @@ class MessagingRulesEngine {
     }
 
     func processRule(_ rule: String) -> [LaunchRule]? {
-        return JSONRulesParser.parse(rule.data(using: .utf8) ?? Data(), runtime: runtime)
+        JSONRulesParser.parse(rule.data(using: .utf8) ?? Data(), runtime: runtime)
     }
 
     func propositionInfoForMessageId(_ messageId: String) -> PropositionInfo? {
-        return propositionInfo[messageId]
+        propositionInfo[messageId]
     }
-        
+
     #if DEBUG
-    /// For testing purposes only
-    internal func propositionInfoCount() -> Int {
-        return propositionInfo.count
-    }
-    
-    /// For testing purposes only
-    internal func inMemoryPropositionsCount() -> Int {
-        return inMemoryPropositions.count
-    }
+        /// For testing purposes only
+        internal func propositionInfoCount() -> Int {
+            propositionInfo.count
+        }
+
+        /// For testing purposes only
+        internal func inMemoryPropositionsCount() -> Int {
+            inMemoryPropositions.count
+        }
     #endif
     
     private let PROP_PAYLOAD_JSON = """

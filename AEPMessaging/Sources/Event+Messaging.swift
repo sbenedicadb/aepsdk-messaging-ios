@@ -1,14 +1,14 @@
 /*
- Copyright 2021 Adobe. All rights reserved.
- This file is licensed to you under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License. You may obtain a copy
- of the License at http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software distributed under
- the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
- OF ANY KIND, either express or implied. See the License for the specific language
- governing permissions and limitations under the License.
- */
+  Copyright 2021 Adobe. All rights reserved.
+  This file is licensed to you under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License. You may obtain a copy
+  of the License at http://www.apache.org/licenses/LICENSE-2.0
+ ​
+  Unless required by applicable law or agreed to in writing, software distributed under
+  the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  */
 
 import AEPCore
 import AEPServices
@@ -72,7 +72,6 @@ extension Event {
     ///         }
     ///     }
     /// }
-
     func getMessageSettings(withParent parent: Any?) -> MessageSettings {
         let cornerRadius = CGFloat(messageCornerRadius ?? 0)
         let settings = MessageSettings(parent: parent)
@@ -89,7 +88,6 @@ extension Event {
             .setDisplayAnimation(messageDisplayAnimation)
             .setDismissAnimation(messageDismissAnimation)
             .setGestures(messageGestures)
-
         return settings
     }
 
@@ -111,7 +109,6 @@ extension Event {
         if let alignmentString = mobileParametersDictionary?[MessagingConstants.Event.Data.Key.IAM.VERTICAL_ALIGN] as? String {
             return MessageAlignment.fromString(alignmentString)
         }
-
         return .center
     }
 
@@ -123,7 +120,6 @@ extension Event {
         if let alignmentString = mobileParametersDictionary?[MessagingConstants.Event.Data.Key.IAM.HORIZONTAL_ALIGN] as? String {
             return MessageAlignment.fromString(alignmentString)
         }
-
         return .center
     }
 
@@ -135,7 +131,6 @@ extension Event {
         if let takeover = mobileParametersDictionary?[MessagingConstants.Event.Data.Key.IAM.UI_TAKEOVER] as? Bool {
             return takeover
         }
-
         return true
     }
 
@@ -147,7 +142,6 @@ extension Event {
         if let opacity = mobileParametersDictionary?[MessagingConstants.Event.Data.Key.IAM.BACKDROP_OPACITY] as? Double {
             return CGFloat(opacity)
         }
-
         return nil
     }
 
@@ -159,7 +153,6 @@ extension Event {
         if let animate = mobileParametersDictionary?[MessagingConstants.Event.Data.Key.IAM.DISPLAY_ANIMATION] as? String {
             return MessageAnimation.fromString(animate)
         }
-
         return .none
     }
 
@@ -167,7 +160,6 @@ extension Event {
         if let animate = mobileParametersDictionary?[MessagingConstants.Event.Data.Key.IAM.DISMISS_ANIMATION] as? String {
             return MessageAnimation.fromString(animate)
         }
-
         return .none
     }
 
@@ -179,10 +171,8 @@ extension Event {
                     gestures[gestureEnum] = url
                 }
             }
-
             return gestures.isEmpty ? nil : gestures
         }
-
         return nil
     }
 
@@ -224,13 +214,14 @@ extension Event {
         guard let payloadMap = data?[MessagingConstants.Event.Data.Key.Personalization.PAYLOAD] as? [[String: Any]] else {
             return nil
         }
-
         var returnablePayloads: [PropositionPayload] = []
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()
         for thisPayloadAny in payloadMap {
-            if let thisPayload = AnyCodable.from(dictionary: thisPayloadAny),
-               let payloadData = try? encoder.encode(thisPayload) {
+            if
+                let thisPayload = AnyCodable.from(dictionary: thisPayloadAny),
+                let payloadData = try? encoder.encode(thisPayload)
+            {
                 do {
                     let payloadObject = try decoder.decode(PropositionPayload.self, from: payloadData)
                     returnablePayloads.append(payloadObject)
@@ -239,12 +230,11 @@ extension Event {
                 }
             }
         }
-
         return returnablePayloads
     }
 
     var scope: String? {
-        return payload?.first?.propositionInfo.scope
+        payload?.first?.propositionInfo.scope
     }
 
     // MARK: Private
