@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import AEPCore
 import AEPServices
 
-class AjoInboundConsequence: Codable {
+struct AjoInboundConsequence: Codable {
     var type: AjoInboundType
     var content: AnyCodable
     var contentType: String
@@ -29,6 +30,10 @@ class AjoInboundConsequence: Codable {
         self.contentType = contentType
         self.expiryDate = expiryDate
         self.meta = meta
+    }
+    
+    init(parent: Messaging, event: Event) {
+        
     }
     
 //    required init(from decoder: Decoder) throws {

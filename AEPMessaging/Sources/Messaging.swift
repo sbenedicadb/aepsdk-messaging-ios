@@ -196,19 +196,21 @@ public class Messaging: NSObject, Extension {
     /// Creates and shows a fullscreen message as defined by the contents of the provided `Event`'s data.
     /// - Parameter event: the `Event` containing data necessary to create the message and report on it
     private func showMessageForEvent(_ event: Event) {
-        guard event.isCjmIamConsequence || event.isAjoInboundConsequence else {
+        if event.isCjmIamConsequence {
+            let message = Message(parent: self, event: event)
+            message.propositionInfo = rulesEngine.propositionInfoForMessageId(message.id)
+            if message.propositionInfo == nil {
+                Log.warning(label: MessagingConstants.LOG_TAG, "Preparing to show a message that does not contain information necessary for tracking with Adobe Journey Optimizer. If you are spoofing this message from the AJO authoring UI or from Assurance, ignore this message.")
+            }
+
+            message.trigger()
+            message.show(withMessagingDelegateControl: true)
+        } else if event.isAjoInboundConsequence {
+            let ajoContent = AjoInboundConsequence(parent: self, event: event)
+        } else {
             Log.debug(label: MessagingConstants.LOG_TAG, "Unable to show message for event \(event.id) - it does not contain a valid definition.")
             return
         }
-
-        let message = Message(parent: self, event: event)
-        message.propositionInfo = rulesEngine.propositionInfoForMessageId(message.id)
-        if message.propositionInfo == nil {
-            Log.warning(label: MessagingConstants.LOG_TAG, "Preparing to show a message that does not contain information necessary for tracking with Adobe Journey Optimizer. If you are spoofing this message from the AJO authoring UI or from Assurance, ignore this message.")
-        }
-
-        message.trigger()
-        message.show(withMessagingDelegateControl: true)
     }
 
     // MARK: - Event Handers

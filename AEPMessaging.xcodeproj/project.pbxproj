@@ -58,6 +58,10 @@
 		243EA6DE2739D4A400195945 /* MockFullscreenMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 243EA6DD2739D4A400195945 /* MockFullscreenMessage.swift */; };
 		243EA6E02739D9D700195945 /* TestableMessagingMobileParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 243EA6DF2739D9D700195945 /* TestableMessagingMobileParameters.swift */; };
 		243EA6E2273B436400195945 /* MockMessagingRulesEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 243EA6E1273B436400195945 /* MockMessagingRulesEngine.swift */; };
+		24448E932A4CDE090077DEDD /* AjoInboundType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24448E8F2A4CDE090077DEDD /* AjoInboundType.swift */; };
+		24448E942A4CDE0A0077DEDD /* AjoInboundConsequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24448E902A4CDE090077DEDD /* AjoInboundConsequence.swift */; };
+		24448E952A4CDE0A0077DEDD /* Trackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24448E912A4CDE090077DEDD /* Trackable.swift */; };
+		24448E962A4CDE0A0077DEDD /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24448E922A4CDE090077DEDD /* Alert.swift */; };
 		244C2BD826B36480008F086A /* MessagingEdgeEventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 244C2BD726B36480008F086A /* MessagingEdgeEventType.swift */; };
 		244C2BDE26B36A4B008F086A /* Message+FullscreenMessageDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 244C2BDD26B36A4B008F086A /* Message+FullscreenMessageDelegate.swift */; };
 		244E954B267BAEBE001DC957 /* Messaging+EdgeEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 244E954A267BAEBE001DC957 /* Messaging+EdgeEvents.swift */; };
@@ -330,6 +334,10 @@
 		243EA6DD2739D4A400195945 /* MockFullscreenMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFullscreenMessage.swift; sourceTree = "<group>"; };
 		243EA6DF2739D9D700195945 /* TestableMessagingMobileParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestableMessagingMobileParameters.swift; sourceTree = "<group>"; };
 		243EA6E1273B436400195945 /* MockMessagingRulesEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMessagingRulesEngine.swift; sourceTree = "<group>"; };
+		24448E8F2A4CDE090077DEDD /* AjoInboundType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AjoInboundType.swift; sourceTree = "<group>"; };
+		24448E902A4CDE090077DEDD /* AjoInboundConsequence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AjoInboundConsequence.swift; sourceTree = "<group>"; };
+		24448E912A4CDE090077DEDD /* Trackable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Trackable.swift; sourceTree = "<group>"; };
+		24448E922A4CDE090077DEDD /* Alert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
 		244C2BD726B36480008F086A /* MessagingEdgeEventType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagingEdgeEventType.swift; sourceTree = "<group>"; };
 		244C2BDD26B36A4B008F086A /* Message+FullscreenMessageDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+FullscreenMessageDelegate.swift"; sourceTree = "<group>"; };
 		244E954A267BAEBE001DC957 /* Messaging+EdgeEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Messaging+EdgeEvents.swift"; sourceTree = "<group>"; };
@@ -647,6 +655,10 @@
 		92315433261E3B36004AE7D3 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				24448E902A4CDE090077DEDD /* AjoInboundConsequence.swift */,
+				24448E8F2A4CDE090077DEDD /* AjoInboundType.swift */,
+				24448E922A4CDE090077DEDD /* Alert.swift */,
+				24448E912A4CDE090077DEDD /* Trackable.swift */,
 				92315435261E3B36004AE7D3 /* AEPMessaging.h */,
 				244E955A267BB253001DC957 /* Dictionary+Merging.swift */,
 				923155762620FC53004AE7D3 /* Event+Messaging.swift */,
@@ -1538,14 +1550,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				244E9555267BB018001DC957 /* String+JSON.swift in Sources */,
+				24448E942A4CDE0A0077DEDD /* AjoInboundConsequence.swift in Sources */,
 				245059982673F94D00CC7CA0 /* MessagingConstants.swift in Sources */,
+				24448E962A4CDE0A0077DEDD /* Alert.swift in Sources */,
 				246FD07226B9F86F00FD130B /* FullscreenMessage+Message.swift in Sources */,
 				24EA13BD2A15902C009792CD /* HtmlMessage.swift in Sources */,
 				243B1B0228B411890074327E /* ItemData.swift in Sources */,
 				243B1AFC28AD7FCE0074327E /* PropositionPayload.swift in Sources */,
+				24448E932A4CDE090077DEDD /* AjoInboundType.swift in Sources */,
 				243B1AFE28AEB1E60074327E /* PropositionInfo.swift in Sources */,
 				240F71FB26868F7100846587 /* SharedStateResult+Messaging.swift in Sources */,
 				24EA13BB2A155CFF009792CD /* Message+NativeAlertListener.swift in Sources */,
+				24448E952A4CDE0A0077DEDD /* Trackable.swift in Sources */,
 				2469A5E3274863F600E56457 /* MessagingRulesEngine+Caching.swift in Sources */,
 				244E954B267BAEBE001DC957 /* Messaging+EdgeEvents.swift in Sources */,
 				245059522671283F00CC7CA0 /* MessagingRulesEngine.swift in Sources */,
