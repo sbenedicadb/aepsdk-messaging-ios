@@ -22,9 +22,9 @@ def lib_main
 end
 
 def lib_dev
-    pod 'AEPCore', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'dev-v3.7.3'
-    pod 'AEPServices', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'dev-v3.7.3'
-    pod 'AEPRulesEngine', :git => 'https://github.com/adobe/aepsdk-rulesengine-ios.git', :branch => 'main'
+    pod 'AEPCore'
+    pod 'AEPServices'
+    pod 'AEPRulesEngine'
 end
 
 def app_main
@@ -40,16 +40,16 @@ def app_main
 end
 
 def app_dev
-    pod 'AEPCore', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'dev-v3.7.3'
-    pod 'AEPServices', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'dev-v3.7.3'
-    pod 'AEPLifecycle', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'dev-v3.7.3'
-    pod 'AEPSignal', :git => 'https://github.com/adobe/aepsdk-core-ios.git', :branch => 'dev-v3.7.3'
-    pod 'AEPRulesEngine', :git => 'https://github.com/adobe/aepsdk-rulesengine-ios.git', :branch => 'main'
-    pod 'AEPEdge', :git => 'https://github.com/adobe/aepsdk-edge-ios.git', :branch => 'main'
+    pod 'AEPCore'
+    pod 'AEPServices'
+    pod 'AEPLifecycle'
+    pod 'AEPSignal'
+    pod 'AEPRulesEngine'
+    pod 'AEPEdge'
     pod 'AEPEdgeConsent'
-    pod 'AEPEdgeIdentity', :git => 'https://github.com/adobe/aepsdk-edgeidentity-ios.git', :branch => 'main'
+    pod 'AEPEdgeIdentity'
     pod 'AEPAnalytics'
-    pod 'AEPAssurance', :git => 'https://github.com/adobe/aepsdk-assurance-ios.git', :branch => 'main'
+    pod 'AEPAssurance'
 end
 
 # ==================
@@ -66,6 +66,11 @@ end
 target 'MessagingDemoAppObjC' do
   app_main
 end
+
+target 'MessagingDemoAppSwiftUI' do
+  app_main
+end
+
 
 target 'UnitTests' do
   lib_main
