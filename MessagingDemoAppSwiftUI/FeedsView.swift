@@ -27,15 +27,14 @@ struct FeedsView: View {
             Grid(alignment: .leading, horizontalSpacing: 70, verticalSpacing: 30) {
                 GridRow {
                     Button("update feeds") {
-                        Messaging.updateFeedsForSurfacePaths(["feeds/promos", "feeds/events"])
+                        Messaging.updateFeedsForSurfacePaths(["feeds/apifeed"])
                     }
                 }
                 GridRow {
                     Button("get feeds") {
-                        Messaging.getFeedsForSurfacePaths(["feeds/promos", "feeds/events"]) { feedsDict, error in
+                        Messaging.getFeedsForSurfacePaths(["feeds/apifeed"]) { feedsDict, error in
                             
-                            guard error == nil,
-                                  let feedsDict = feedsDict else {
+                            guard error == nil, let feedsDict = feedsDict else {
                                 return
                             }
 

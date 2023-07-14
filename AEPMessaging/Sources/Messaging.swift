@@ -119,6 +119,9 @@ public class Messaging: NSObject, Extension {
 
     /// Called on every event, used to allow processing of the Messaging rules engine
     private func handleWildcardEvent(_ event: Event) {
+        if event.type == "com.adobe.eventType.rulesEngine", event.source == "com.adobe.eventSource.responseContent" {
+            return
+        }
         rulesEngine.process(event: event)
     }
 
@@ -246,7 +249,7 @@ public class Messaging: NSObject, Extension {
         // parse and load message rules
         Log.trace(label: MessagingConstants.LOG_TAG, "Loading message definitions from personalization:decisions network response.")
         let rules = parsePropositions(event.payload, expectedSurfaces: requestedSurfacesforEventId[messagesRequestEventId] ?? [], clearExisting: clearExistingRules)
-        rulesEngine.launchRulesEngine.loadRules(rules, clearExisting: clearExistingRules)
+        feedRulesEngine.launchRulesEngine.loadRules(rules, clearExisting: clearExistingRules)
 
         if rules.first?.consequences.first?.isFeedItem == true {
             let feeds = feedRulesEngine.evaluate(event: event) ?? [:]
@@ -423,7 +426,7 @@ public class Messaging: NSObject, Extension {
                 continue
             }
 
-            guard let rulesString = proposition.items.first?.data.content, !rulesString.isEmpty else {
+            guard let rulesString = proposition.items.first?.data.contentString, !rulesString.isEmpty else {
                 Log.debug(label: MessagingConstants.LOG_TAG, "Skipping proposition with no in-app message content.")
                 continue
             }

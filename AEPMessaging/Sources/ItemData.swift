@@ -10,9 +10,15 @@
  governing permissions and limitations under the License.
  */
 
+import AEPServices
 import Foundation
 
 struct ItemData: Codable {
     var id: String?
-    var content: String
+//    var content: String
+    var content: [String: AnyCodable]
+    var contentString: String? {
+        let encoder = JSONEncoder()
+        return try? String(data: encoder.encode(content), encoding: .utf8)
+    }
 }
