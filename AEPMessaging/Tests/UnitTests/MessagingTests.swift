@@ -120,16 +120,47 @@ class MessagingTests: XCTestCase {
         XCTAssertEqual(event, mockMessagingRulesEngine.paramProcessEvent)
     }
     
+    func listen(type: String, source: String, handler: @escaping ((Event) -> Void)) {
+        MobileCore.registerEventListener(type: type, source: source, listener: handler)
+    }
+    
 //    func testFetchMessages() throws {
 //        // setup
-//        let event = Event(name: "Test Event Name", type: "type", source: "source", data: nil)
-//        mockRuntime.simulateSharedState(for: MessagingConstants.SharedState.Configuration.NAME, data: (value: [MessagingConstants.SharedState.Configuration.EXPERIENCE_CLOUD_ORG: "aTestOrgId"], status: SharedStateStatus.set))
+//        var requestEvent: Event?
+//        let requestEventExpectation = XCTestExpectation(description: "retrieve message definitions event")
+//        MobileCore.registerEventListener(type: EventType.edge, source: EventSource.requestContent) { event in
+//            requestEvent = event
+//            requestEventExpectation.fulfill()
+//        }
+//        
+//        var processCompleteEvent: Event?
+//        let processCompletedEventExpectation = XCTestExpectation(description: "finalize propositions response event")
+//        mockRuntime.registerListener(type: EventType.messaging, source: EventSource.contentComplete) { event in
+//            processCompleteEvent = event
+//            processCompletedEventExpectation.fulfill()
+//        }
+//        
+//        let event = Event(name: "Testing Fetch Messages",
+//                          type: EventType.messaging,
+//                          source: EventSource.requestContent,
+//                          data: [
+//                            MessagingConstants.Event.Data.Key.REFRESH_MESSAGES: true
+//                          ])
+//        
+//        mockRuntime.simulateSharedState(for: MessagingConstants.SharedState.Configuration.NAME, data: (value: [EXPERIENCE_CLOUD_ORG: "aTestOrgId"], status: SharedStateStatus.set))
 //        mockRuntime.simulateXDMSharedState(for: MessagingConstants.SharedState.EdgeIdentity.NAME, data: (value: SampleEdgeIdentityState, status: SharedStateStatus.set))
-//
+//        
 //        // test
-//        _ = messaging.readyForEvent(event)
+//        mockRuntime.simulateComingEvents(event)
 //
 //        // verify
+//        XCTAssertEqual(1, mockRuntime.dispatchedEvents.count)
+//        wait(for: [requestEventExpectation, processCompletedEventExpectation], timeout: 5.0)
+//        XCTAssertNotNil(requestEvent)
+//        XCTAssertNotNil(processCompleteEvent)
+        
+        
+        
 //        XCTAssertEqual(1, mockRuntime.dispatchedEvents.count)
 //        let fetchEvent = mockRuntime.firstEvent
 //        XCTAssertNotNil(fetchEvent)
@@ -158,7 +189,7 @@ class MessagingTests: XCTestCase {
 //                                [ "uri": mockFeedSurface.uri ]
 //                            ]
 //                          ])
-//        mockRuntime.simulateSharedState(for: MessagingConstants.SharedState.Configuration.NAME, data: (value: [MessagingConstants.SharedState.Configuration.EXPERIENCE_CLOUD_ORG: "aTestOrgId"], status: SharedStateStatus.set))
+//        mockRuntime.simulateSharedState(for: MessagingConstants.SharedState.Configuration.NAME, data: (value: [EXPERIENCE_CLOUD_ORG: "aTestOrgId"], status: SharedStateStatus.set))
 //        mockRuntime.simulateXDMSharedState(for: MessagingConstants.SharedState.EdgeIdentity.NAME, data: (value: SampleEdgeIdentityState, status: SharedStateStatus.set))
 //        
 //        // test
@@ -181,49 +212,49 @@ class MessagingTests: XCTestCase {
 //        XCTAssertEqual(1, fetchEventSurfaces?.count)
 //        XCTAssertEqual("mobileapp://com.apple.dt.xctest.tool/promos/feed1", fetchEventSurfaces?.first)
 //    }
-    
-    func testFetchMessages_whenUpdateFeedsRequest_emptySurfacesInArray() throws {
-        // setup
-        let event = Event(name: "Update message feeds event",
-                          type: "com.adobe.eventType.messaging",
-                          source: "com.adobe.eventSource.requestContent",
-                          data: [
-                            "updatefeeds": true,
-                            "surfaces": [
-                                "",
-                                ""
-                            ]
-                          ])
-        mockRuntime.simulateSharedState(for: MessagingConstants.SharedState.Configuration.NAME, data: (value: [EXPERIENCE_CLOUD_ORG: "aTestOrgId"], status: SharedStateStatus.set))
-        mockRuntime.simulateXDMSharedState(for: MessagingConstants.SharedState.EdgeIdentity.NAME, data: (value: SampleEdgeIdentityState, status: SharedStateStatus.set))
-        
-        // test
-        mockRuntime.simulateComingEvents(event)
-        
-        // verify
-        // TODO: verify push status event response?
-        XCTAssertEqual(1, mockRuntime.dispatchedEvents.count)
-    }
-    
-    func testFetchMessages_whenUpdateFeedsRequest_emptySurfacesArray() throws {
-        // setup
-        let event = Event(name: "Update message feeds event",
-                          type: "com.adobe.eventType.messaging",
-                          source: "com.adobe.eventSource.requestContent",
-                          data: [
-                            "updatefeeds": true,
-                            "surfaces": [] as [String]
-                          ])
-        mockRuntime.simulateSharedState(for: MessagingConstants.SharedState.Configuration.NAME, data: (value: [EXPERIENCE_CLOUD_ORG: "aTestOrgId"], status: SharedStateStatus.set))
-        mockRuntime.simulateXDMSharedState(for: MessagingConstants.SharedState.EdgeIdentity.NAME, data: (value: SampleEdgeIdentityState, status: SharedStateStatus.set))
-        
-        // test
-        mockRuntime.simulateComingEvents(event)
-        
-        // verify
-        // TODO: verify push status event response?
-        XCTAssertEqual(1, mockRuntime.dispatchedEvents.count)
-    }
+//    
+//    func testFetchMessages_whenUpdateFeedsRequest_emptySurfacesInArray() throws {
+//        // setup
+//        let event = Event(name: "Update message feeds event",
+//                          type: "com.adobe.eventType.messaging",
+//                          source: "com.adobe.eventSource.requestContent",
+//                          data: [
+//                            "updatepropositions": true,
+//                            "surfaces": [
+//                                "",
+//                                ""
+//                            ]
+//                          ])
+//        mockRuntime.simulateSharedState(for: MessagingConstants.SharedState.Configuration.NAME, data: (value: [EXPERIENCE_CLOUD_ORG: "aTestOrgId"], status: SharedStateStatus.set))
+//        mockRuntime.simulateXDMSharedState(for: MessagingConstants.SharedState.EdgeIdentity.NAME, data: (value: SampleEdgeIdentityState, status: SharedStateStatus.set))
+//        
+//        // test
+//        mockRuntime.simulateComingEvents(event)
+//        
+//        // verify
+//        // TODO: verify push status event response?
+//        XCTAssertEqual(1, mockRuntime.dispatchedEvents.count)
+//    }
+//    
+//    func testFetchMessages_whenUpdateFeedsRequest_emptySurfacesArray() throws {
+//        // setup
+//        let event = Event(name: "Update message feeds event",
+//                          type: "com.adobe.eventType.messaging",
+//                          source: "com.adobe.eventSource.requestContent",
+//                          data: [
+//                            "updatepropositions": true,
+//                            "surfaces": [] as [String]
+//                          ])
+//        mockRuntime.simulateSharedState(for: MessagingConstants.SharedState.Configuration.NAME, data: (value: [EXPERIENCE_CLOUD_ORG: "aTestOrgId"], status: SharedStateStatus.set))
+//        mockRuntime.simulateXDMSharedState(for: MessagingConstants.SharedState.EdgeIdentity.NAME, data: (value: SampleEdgeIdentityState, status: SharedStateStatus.set))
+//        
+//        // test
+//        mockRuntime.simulateComingEvents(event)
+//        
+//        // verify
+//        // TODO: verify push status event response?
+//        XCTAssertEqual(1, mockRuntime.dispatchedEvents.count)
+//    }
     
 //    func testHandleEdgePersonalizationNotificationHappy_inAppPropositions() throws {
 //        // setup

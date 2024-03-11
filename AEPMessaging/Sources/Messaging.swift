@@ -71,6 +71,7 @@ public class Messaging: NSObject, Extension {
         set { queue.async { self._inProgressPropositions = newValue } }
     }
 
+    /// keep track of in-app rules for the rules engine by their surface
     private var _inAppRulesBySurface: [Surface: [LaunchRule]] = [:]
     private var inAppRulesBySurface: [Surface: [LaunchRule]] {
         get { queue.sync { self._inAppRulesBySurface } }
@@ -201,7 +202,7 @@ public class Messaging: NSObject, Extension {
     /// - Parameters:
     /// - event - do this
     ///   - surfaces: an array of surface path strings for fetching feed messages, if available.
-    private func fetchMessages(_ event: Event, for surfaces: [Surface]? = nil) {
+    func fetchMessages(_ event: Event, for surfaces: [Surface]? = nil) {
         var requestedSurfaces: [Surface] = []
 
         // if surfaces are provided, use them - otherwise assume the request is for base surface (mobileapp://{bundle identifier})
@@ -282,6 +283,8 @@ public class Messaging: NSObject, Extension {
             self.dispatch(event: processCompletedEvent)
         }
     }
+    
+    
 
     func handleProcessCompletedEvent(_ event: Event) {
         defer {
