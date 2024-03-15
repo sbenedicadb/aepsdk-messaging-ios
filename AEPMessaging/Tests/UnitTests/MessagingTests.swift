@@ -10,8 +10,8 @@
 // governing permissions and limitations under the License.
 //
 
-import AEPCore
-import AEPServices
+@testable import AEPCore
+@testable import AEPServices
 import AEPTestUtils
 import XCTest
 
@@ -28,7 +28,7 @@ class MessagingTests: XCTestCase {
     var mockLaunchRulesEngine: MockLaunchRulesEngine!
     var mockCache: MockCache!
     let mockFeedSurface = Surface(path: "promos/feed1")
-
+    
     // Mock constants
     let MOCK_ECID = "mock_ecid"
     let MOCK_EVENT_DATASET = "mock_event_dataset"
@@ -48,9 +48,7 @@ class MessagingTests: XCTestCase {
         messaging.onRegistered()
         
         mockNetworkService = MockNetworkService()
-        ServiceProvider.shared.networkService = mockNetworkService!
-        
-        MobileCore.messagingDelegate = nil
+        ServiceProvider.shared.networkService = mockNetworkService!        
     }
     
     override func tearDown() {
@@ -124,59 +122,58 @@ class MessagingTests: XCTestCase {
         MobileCore.registerEventListener(type: type, source: source, listener: handler)
     }
     
-//    func testFetchMessages() throws {
-//        // setup
-//        var requestEvent: Event?
-//        let requestEventExpectation = XCTestExpectation(description: "retrieve message definitions event")
-//        MobileCore.registerEventListener(type: EventType.edge, source: EventSource.requestContent) { event in
-//            requestEvent = event
-//            requestEventExpectation.fulfill()
-//        }
-//        
-//        var processCompleteEvent: Event?
-//        let processCompletedEventExpectation = XCTestExpectation(description: "finalize propositions response event")
-//        mockRuntime.registerListener(type: EventType.messaging, source: EventSource.contentComplete) { event in
-//            processCompleteEvent = event
-//            processCompletedEventExpectation.fulfill()
-//        }
-//        
-//        let event = Event(name: "Testing Fetch Messages",
-//                          type: EventType.messaging,
-//                          source: EventSource.requestContent,
-//                          data: [
-//                            MessagingConstants.Event.Data.Key.REFRESH_MESSAGES: true
-//                          ])
-//        
-//        mockRuntime.simulateSharedState(for: MessagingConstants.SharedState.Configuration.NAME, data: (value: [EXPERIENCE_CLOUD_ORG: "aTestOrgId"], status: SharedStateStatus.set))
-//        mockRuntime.simulateXDMSharedState(for: MessagingConstants.SharedState.EdgeIdentity.NAME, data: (value: SampleEdgeIdentityState, status: SharedStateStatus.set))
-//        
-//        // test
-//        mockRuntime.simulateComingEvents(event)
-//
-//        // verify
-//        XCTAssertEqual(1, mockRuntime.dispatchedEvents.count)
-//        wait(for: [requestEventExpectation, processCompletedEventExpectation], timeout: 5.0)
-//        XCTAssertNotNil(requestEvent)
-//        XCTAssertNotNil(processCompleteEvent)
+    func testFetchMessages() throws {
+        // setup
+        var requestEvent: Event?
+        let requestEventExpectation = XCTestExpectation(description: "retrieve message definitions event")
+        MobileCore.registerEventListener(type: EventType.edge, source: EventSource.requestContent) { event in
+            requestEvent = event
+            requestEventExpectation.fulfill()
+        }
         
+        var processCompleteEvent: Event?
+        let processCompletedEventExpectation = XCTestExpectation(description: "finalize propositions response event")
+        mockRuntime.registerListener(type: EventType.messaging, source: EventSource.contentComplete) { event in
+            processCompleteEvent = event
+            processCompletedEventExpectation.fulfill()
+        }
         
+        let event = Event(name: "Testing Fetch Messages",
+                          type: EventType.messaging,
+                          source: EventSource.requestContent,
+                          data: [
+                            MessagingConstants.Event.Data.Key.REFRESH_MESSAGES: true
+                          ])
         
-//        XCTAssertEqual(1, mockRuntime.dispatchedEvents.count)
-//        let fetchEvent = mockRuntime.firstEvent
-//        XCTAssertNotNil(fetchEvent)
-//        XCTAssertEqual(EventType.edge, fetchEvent?.type)
-//        XCTAssertEqual(EventSource.requestContent, fetchEvent?.source)
-//        let fetchEventData = fetchEvent?.data
-//        XCTAssertNotNil(fetchEventData)
-//        let fetchEventQuery = fetchEventData?[MessagingConstants.XDM.Inbound.Key.QUERY] as? [String: Any]
-//        XCTAssertNotNil(fetchEventQuery)
-//        let fetchEventPersonalization = fetchEventQuery?[MessagingConstants.XDM.Inbound.Key.PERSONALIZATION] as? [String: Any]
-//        XCTAssertNotNil(fetchEventPersonalization)
-//        let fetchEventSurfaces = fetchEventPersonalization?[MessagingConstants.XDM.Inbound.Key.SURFACES] as? [String]
-//        XCTAssertNotNil(fetchEventSurfaces)
-//        XCTAssertEqual(1, fetchEventSurfaces?.count)
-//        XCTAssertEqual("mobileapp://com.apple.dt.xctest.tool", fetchEventSurfaces?.first)
-//    }
+        mockRuntime.simulateSharedState(for: MessagingConstants.SharedState.Configuration.NAME, data: (value: [EXPERIENCE_CLOUD_ORG: "aTestOrgId"], status: SharedStateStatus.set))
+        mockRuntime.simulateXDMSharedState(for: MessagingConstants.SharedState.EdgeIdentity.NAME, data: (value: SampleEdgeIdentityState, status: SharedStateStatus.set))
+        
+        // test
+        mockRuntime.simulateComingEvents(event)
+
+        // verify
+        XCTAssertEqual(1, mockRuntime.dispatchedEvents.count)
+        wait(for: [requestEventExpectation, processCompletedEventExpectation], timeout: 5.0)
+        XCTAssertNotNil(requestEvent)
+        XCTAssertNotNil(processCompleteEvent)
+                
+        
+        XCTAssertEqual(1, mockRuntime.dispatchedEvents.count)
+        let fetchEvent = mockRuntime.firstEvent
+        XCTAssertNotNil(fetchEvent)
+        XCTAssertEqual(EventType.edge, fetchEvent?.type)
+        XCTAssertEqual(EventSource.requestContent, fetchEvent?.source)
+        let fetchEventData = fetchEvent?.data
+        XCTAssertNotNil(fetchEventData)
+        let fetchEventQuery = fetchEventData?[MessagingConstants.XDM.Inbound.Key.QUERY] as? [String: Any]
+        XCTAssertNotNil(fetchEventQuery)
+        let fetchEventPersonalization = fetchEventQuery?[MessagingConstants.XDM.Inbound.Key.PERSONALIZATION] as? [String: Any]
+        XCTAssertNotNil(fetchEventPersonalization)
+        let fetchEventSurfaces = fetchEventPersonalization?[MessagingConstants.XDM.Inbound.Key.SURFACES] as? [String]
+        XCTAssertNotNil(fetchEventSurfaces)
+        XCTAssertEqual(1, fetchEventSurfaces?.count)
+        XCTAssertEqual("mobileapp://com.apple.dt.xctest.tool", fetchEventSurfaces?.first)
+    }
     
 //    func testFetchMessages_whenUpdateFeedsRequest() throws {
 //        // setup

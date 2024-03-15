@@ -20,13 +20,28 @@ class MessagingFunctionalTests: XCTestCase, AnyCodableAsserts {
     var messaging: Messaging!
     var mockRuntime: TestableExtensionRuntime!
     var mockConfigSharedState: [String: Any] = [:]
+    let ASYNC_TIMEOUT = 2.0
 
     override func setUp() {
         mockRuntime = TestableExtensionRuntime()
         mockRuntime.ignoreEvent(type: EventType.rulesEngine, source: EventSource.requestReset)
         messaging = Messaging(runtime: mockRuntime)
         messaging.onRegistered()
+        
+        EventHub.reset()
+        MockExtension.reset()
+        EventHub.shared.start()
+        registerMockExtension(MockExtension.self)
     }
+    
+    private func registerMockExtension<T: Extension> (_ type: T.Type) {
+            let semaphore = DispatchSemaphore(value: 0)
+            EventHub.shared.registerExtension(type) { (error) in
+                semaphore.signal()
+            }
+
+            semaphore.wait()
+        }
 
     // MARK: - Handle Notification Response
 
@@ -185,5 +200,55 @@ class MessagingFunctionalTests: XCTestCase, AnyCodableAsserts {
         // verify that push token is shared in sharedState
         XCTAssertEqual(1, mockRuntime.createdSharedStates.count)
         XCTAssertEqual("mockPushToken", mockRuntime.firstSharedState![MessagingConstants.SharedState.Messaging.PUSH_IDENTIFIER] as! String)
+    }
+    
+    func testFetchMessages_noSurface() throws {
+        let expectedJson = #"""
+        {
+            "query" : {
+                "personalization" : {
+                    "schemas" : [
+                        "https:\/\/ns.adobe.com\/personalization\/html-content-item",
+                        "https:\/\/ns.adobe.com\/personalization\/json-content-item",
+                        "https:\/\/ns.adobe.com\/personalization\/ruleset-item"
+                    ],
+                    "surfaces" : [
+                        "mobileapp:\/\/com.adobe.ajo.e2eTestApp"
+                    ]
+                }
+            },
+            "data" : {
+                "__adobe" : {
+                    "ajo" : {
+                        "in-app-response-format" : 2
+                    }
+                }
+            },
+            "request" : {
+                "sendCompletion" : true
+            },
+            "xdm" : {
+                "eventType" : "personalization.request"
+            }
+        }
+        """#
+        
+        // listener verification
+        let listenerExpectation = XCTestExpectation(description: "listener was called")
+        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: EventType.edge, source: EventSource.requestContent) { event in
+            XCTAssertNotNil(event)
+            self.assertExactMatch(expected: self.getAnyCodable(expectedJson)!, actual: self.getAnyCodable(event))
+            listenerExpectation.fulfill()
+        }
+        
+        // setup
+        let eventData: [String: Any] = [:]
+        let event = Event(name: "test", type: EventType.messaging, source: EventSource.requestContent, data: eventData)
+        
+        // test
+        messaging.fetchMessages(event)
+        
+        // wait
+        wait(for: [listenerExpectation], timeout: ASYNC_TIMEOUT)
     }
 }
