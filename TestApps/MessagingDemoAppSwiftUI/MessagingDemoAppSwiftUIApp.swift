@@ -49,6 +49,11 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         #endif
         }
         
+        MobileCore.registerEventListener(type: EventType.edge, source: EventSource.requestContent) { event in
+            print("event from the custom event listener: \(event)")
+        }
+        
+        
         self.registerForPushNotifications(application)
         return true
     }
