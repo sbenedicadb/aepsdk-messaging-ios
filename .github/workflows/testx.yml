@@ -35,11 +35,12 @@ jobs:
     steps:
       - uses: ethomson/send-tweet-action@v1
         with:
-          status: ${{ github.event.inputs.description }}
+          status: "hard coded tweet" #${{ github.event.inputs.description }}
           consumer-key: ${{ secrets.TWITTER_API_KEY }}
           consumer-secret: ${{ secrets.TWITTER_API_SECRET_KEY }}
           access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
           access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+          
   # tweet:
   #   name: Tweet
   #   runs-on: ubuntu-latest
