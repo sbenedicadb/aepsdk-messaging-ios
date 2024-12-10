@@ -33,13 +33,23 @@ jobs:
   tweet:
     runs-on: ubuntu-latest
     steps:
-      - uses: ethomson/send-tweet-action@v1
+      - uses: nearform-actions/github-action-notify-twitter@master
         with:
-          status: "hard coded tweet" #${{ github.event.inputs.description }}
-          consumer-key: ${{ secrets.TWITTER_API_KEY }}
-          consumer-secret: ${{ secrets.TWITTER_API_SECRET_KEY }}
-          access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
-          access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+          message: ${{ github.event.inputs.description }} #|
+            # ${{ github.event.repository.name }} ${{ github.event.release.tag_name }} has been released. Check out the release notes: ${{ github.event.release.html_url }}
+          twitter-app-key: ${{ secrets.TWITTER_API_KEY }}
+          twitter-app-secret: ${{ secrets.TWITTER_API_SECRET_KEY }}
+          twitter-access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          twitter-access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+
+    
+      # - uses: ethomson/send-tweet-action@v1
+      #   with:
+      #     status: "hard coded tweet" #${{ github.event.inputs.description }}
+      #     consumer-key: ${{ secrets.TWITTER_API_KEY }}
+      #     consumer-secret: ${{ secrets.TWITTER_API_SECRET_KEY }}
+      #     access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+      #     access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
           
   # tweet:
   #   name: Tweet
