@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     # Inputs the workflow accepts.
     inputs:
-      name:
+      message:
         # Friendly description to be shown in the UI instead of 'name'
         description: 'Message'
         # Default value if no value is explicitly provided
@@ -35,7 +35,7 @@ jobs:
     steps:
       - uses: nearform-actions/github-action-notify-twitter@v1.2.2
         with:
-          message: "${{ github.event.inputs.description }}" #|
+          message: ${{ github.event.inputs.message }} #|
             # ${{ github.event.repository.name }} ${{ github.event.release.tag_name }} has been released. Check out the release notes: ${{ github.event.release.html_url }}
           twitter-app-key: ${{ secrets.TWITTER_API_KEY }}
           twitter-app-secret: ${{ secrets.TWITTER_API_SECRET_KEY }}
