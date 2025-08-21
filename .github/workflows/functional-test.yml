@@ -38,9 +38,9 @@ jobs:
       - name: Launch iOS Simulator
         uses: futureware-tech/simulator-action@bfa03d93ec9de6dacb0c5553bbf8da8afc6c2ee9
         with:
-          model: 'iPhone 15'
+          model: 'iPhone 16'
           os: 'iOS'
-          os_version: '17.5'
+          os_version: '18.0'
           erase_before_boot: false
           shutdown_after_job: false
 
