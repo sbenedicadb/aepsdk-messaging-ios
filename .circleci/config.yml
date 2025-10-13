@@ -4,7 +4,7 @@
 version: 2.1
 
 orbs:
-  # codecov: codecov/codecov@3.3.0
+  codecov: codecov/codecov@5.4.3
   macos: circleci/macos@2
 
 workflows:
@@ -56,6 +56,54 @@ commands:
           version: "18.0"
           device: "iPhone 16"
 
+  parse_and_upload_coverage:
+      description: "Convert .xcresult → Cobertura XML and upload to Codecov"
+      parameters:
+        # Directory or file created by -resultBundlePath (ex: build/AEPCore-ios.xcresult)
+        path: { type: string }
+        # Codecov flag (ex: aepcore-ios-tests)
+        flag: { type: string }
+      steps:
+        - run:
+            name: Install xcresultparser
+            command: brew list xcresultparser || brew install xcresultparser
+
+        - run:
+            name: Parse .xcresult bundle(s)
+            command: |
+              set -eo pipefail
+              mkdir -p ./build/coverage
+
+              BUNDLE="<< parameters.path >>"
+
+              if [ -d "$BUNDLE" ]; then
+                echo "Directory given; searching for .xcresult…"
+                RESULT_FILES=$(find "$BUNDLE" -name "*.xcresult")
+                [ -z "$RESULT_FILES" ] && { echo "No .xcresult found"; exit 0; }
+
+                # Merge if there is more than one bundle
+                COUNT=$(echo "$RESULT_FILES" | wc -w)
+                if [ "$COUNT" -gt 1 ]; then
+                  echo "Merging $COUNT result bundles"
+                  MERGE_CMD="xcrun xccov merge --output ./build/Merged.xcresult"
+                  for f in $RESULT_FILES; do MERGE_CMD="$MERGE_CMD $f"; done
+                  eval "$MERGE_CMD"
+                  xcresultparser --output-format cobertura ./build/Merged.xcresult > ./build/coverage/coverage.xml
+                else
+                  echo "Single bundle found"
+                  xcresultparser --output-format cobertura $RESULT_FILES > ./build/coverage/coverage.xml
+                fi
+              else
+                echo "File given; parsing $BUNDLE"
+                xcresultparser --output-format cobertura "$BUNDLE" > ./build/coverage/coverage.xml
+              fi
+
+        - codecov/upload:
+            files: ./build/coverage/coverage.xml
+            flags: << parameters.flag >>
+            upload_name: << parameters.flag >>
+            disable_search: true
+
 jobs:
   validate-code:
     macos:
@@ -85,12 +133,9 @@ jobs:
           name: Run Unit Tests
           command: make unit-test
 
-      # Code coverage upload using Codecov
-      # See options explanation here: https://docs.codecov.com/docs/codecov-uploader
-      # - codecov/upload:
-      #     flags: aepmessaging-ios-tests
-      #     upload_name: Coverage Report for AEPMessaging iOS Tests
-      #     xtra_args: -c -v --xc --xp ./build/AEPMessaging.xcresult
+      - parse_and_upload_coverage:
+          path: build/AEPMessaging-ios.xcresult
+          flag: aepmessaging-ios-tests
 
       - run:
           name: Run Functional Tests
