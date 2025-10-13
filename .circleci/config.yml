@@ -107,7 +107,7 @@ commands:
 jobs:
   validate-code:
     macos:
-      xcode: 16.0.0 # Specify the Xcode version to use
+      xcode: 16.4.0 # Specify the Xcode version to use
 
     steps:
       - checkout
@@ -120,7 +120,7 @@ jobs:
 
   test-ios:
     macos:
-      xcode: 16.0.0 # Specify the Xcode version to use
+      xcode: 16.4.0 # Specify the Xcode version to use
 
     steps:
       - checkout
@@ -133,9 +133,9 @@ jobs:
           name: Run Unit Tests
           command: make unit-test
 
-      - parse_and_upload_coverage:
-          path: build/AEPMessaging-ios.xcresult
-          flag: aepmessaging-ios-tests
+      # - parse_and_upload_coverage:
+      #     path: build/AEPMessaging-ios.xcresult
+      #     flag: aepmessaging-ios-tests
 
       - run:
           name: Run Functional Tests
@@ -149,7 +149,7 @@ jobs:
 
   test-spm-podspec-archive:  
     macos:
-      xcode: 16.0.0 # Specify the Xcode version to use
+      xcode: 16.4.0 # Specify the Xcode version to use
     
     steps:
       - checkout
