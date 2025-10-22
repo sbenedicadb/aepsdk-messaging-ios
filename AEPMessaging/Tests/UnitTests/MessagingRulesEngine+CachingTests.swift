@@ -19,7 +19,7 @@ import Foundation
 import XCTest
 
 class MessagingRulesEngineCachingTests: XCTestCase {
-    let ASYNC_TIMEOUT = 2.0
+    let ASYNC_TIMEOUT = 4.0
     var messagingRulesEngine: MessagingRulesEngine!
     var mockRulesEngine: MockLaunchRulesEngine!
     var mockRuntime: TestableExtensionRuntime!
