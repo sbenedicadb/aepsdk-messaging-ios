@@ -39,7 +39,7 @@ class MessagingRulesEngineCachingTests: XCTestCase {
         mockCache.setCalledExpectation = setCalledExpecation
         let thirtyDaysInSeconds = 60*60*24*30 as TimeInterval
         let thirtyDaysFromToday = Date().addingTimeInterval(thirtyDaysInSeconds)
-        let assetString = "https://blog.adobe.com/en/publish/2020/05/28/media_1cc0fcc19cf0e64decbceb3a606707a3ad23f51dd.png"
+        let assetString = "https://picsum.photos/id/237/200/300"
         let consequence = RuleConsequence(id: "552", type: "cjmiam", details: [
             "remoteAssets": [assetString]
         ])
@@ -55,7 +55,11 @@ class MessagingRulesEngineCachingTests: XCTestCase {
         XCTAssertTrue(mockCache.setCalled)
         XCTAssertEqual(assetString, mockCache.setParamKey)
         XCTAssertNotNil(mockCache.setParamEntry?.data)
-        XCTAssertEqual(.orderedSame, Calendar.current.compare(thirtyDaysFromToday, to: mockCache.setParamEntry!.expiry.date, toGranularity: .hour))
+        guard let capturedDate = mockCache.setParamEntry?.expiry.date else {
+            XCTFail("date param was not captured from 'set' call in mockCache")
+            return
+        }
+        XCTAssertEqual(.orderedSame, Calendar.current.compare(thirtyDaysFromToday, to: capturedDate, toGranularity: .hour))
     }
 
     func testCacheRemoteAssetsMalformedAssetUrl() throws {
