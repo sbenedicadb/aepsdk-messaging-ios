@@ -55,7 +55,7 @@ commands:
     steps:
       - macos/preboot-simulator:
           platform: "iOS"
-          version: "18.0"
+          version: "18.5"
           device: "iPhone 16"
 
   parse_and_upload_coverage:
