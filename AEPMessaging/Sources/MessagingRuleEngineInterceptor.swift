@@ -25,6 +25,17 @@ class MessagingRuleEngineInterceptor: RuleReevaluationInterceptor {
     private var isRefreshInProgress = false
     private var pendingCompletions: [() -> Void] = []
     
+    /// Function to refresh propositions - internal in DEBUG for testing, private otherwise
+      #if DEBUG
+        var refreshPropositions: (@escaping (Bool) -> Void) -> Void = { completion in
+          Messaging.updatePropositionsForSurfaces([Surface()], completion)
+        }
+      #else
+        private let refreshPropositions: (@escaping (Bool) -> Void) -> Void = { completion in
+          Messaging.updatePropositionsForSurfaces([Surface()], completion)
+        }
+      #endif
+    
     func onReevaluationTriggered(
         event: Event,
         reevaluableRules: [LaunchRule],
