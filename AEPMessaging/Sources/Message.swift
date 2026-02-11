@@ -84,7 +84,14 @@ public class Message: NSObject {
 
         fullscreenMessage?.dismiss()
     }
-
+    
+    /// Records a display event in the device's event history database.
+    /// Should only be used in conjunction with a `MessagingDelegate` to enforce show frequency rules even if the `Message` was suppressed.
+    @objc
+    public func recordDisplay() {
+        recordEventHistory(eventType: .display, interaction: nil)
+    }
+    
     // MARK: - Edge Event creation
 
     /// Generates an Edge Event for the provided `interaction` and `eventType`.
