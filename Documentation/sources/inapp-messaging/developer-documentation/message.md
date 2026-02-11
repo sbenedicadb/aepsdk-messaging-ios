@@ -71,6 +71,16 @@ public func track(_ interaction: String?, withEdgeEventType eventType: Messaging
 - _interaction_ - a custom `String` value to be recorded in the interaction
 - _eventType_ - the [`MessagingEdgeEventType`](./../../shared/enums/enum-messaging-edge-event-type.md) to be used for the ensuing Edge Event
 
+## recordDisplay
+
+Records a display event in the device's event history database.
+
+This method should be used in conjunction with a `MessagingDelegate` to enforce show frequency rules even if the `Message` was suppressed. Unlike `track(_:withEdgeEventType:)`, this method only writes to local event history and does not dispatch an Edge Event.
+
+```swift
+public func recordDisplay()
+```
+
 ## handleJavascriptMessage(_:withHandler:)
 
 Adds a handler for named Javascript messages sent from the message's `WKWebView`.

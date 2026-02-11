@@ -121,6 +121,29 @@ func shouldShowMessage(message: Showable) -> Bool {
 }
 ```
 
+## Recording a display event for suppressed messages
+
+When you suppress a message by returning `false` from `shouldShowMessage`, frequency capping rules will not count that suppression as a display. If you want frequency capping to treat the suppressed message as though it was displayed, call the `recordDisplay()` method on the `Message` object.
+
+This is useful when you want to ensure that a user doesn't qualify for the same message again, even though it was suppressed:
+
+```swift
+func shouldShowMessage(message: Showable) -> Bool {
+    let fullscreenMessage = message as? FullscreenMessage
+    let message = fullscreenMessage?.parent
+
+    if shouldSuppressMessage {
+        // Record the display event to enforce frequency capping
+        // even though the message is not shown
+        message?.recordDisplay()
+        
+        return false
+    }
+
+    return true
+}
+```
+
 ## Integrating the message into an existing UI
 
 If the developer would like to manually integrate the `View` that contains the UI for an in-app message, they can do so by accessing the `WKWebView` directly in a `MessagingDelegate` method.  
