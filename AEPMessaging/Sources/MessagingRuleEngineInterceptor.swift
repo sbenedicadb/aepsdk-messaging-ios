@@ -17,61 +17,17 @@ import Foundation
 /// Interceptor that handles reevaluation of rules by refreshing in-app messages.
 /// When a reevaluable rule matches, this interceptor triggers a refresh of message
 /// definitions from the remote before allowing the rule consequences to be processed.
+/// Uses RefreshInAppHandler to deduplicate concurrent refresh requests.
 class MessagingRuleEngineInterceptor: RuleReevaluationInterceptor {
-    
-    /// Serial queue for thread-safe access to state
-    private let queue = DispatchQueue(label: "com.adobe.messaging.reevaluation.queue")
-    
-    private var isRefreshInProgress = false
-    private var pendingCompletions: [() -> Void] = []
-    
-    /// Function to refresh propositions - internal in DEBUG for testing, private otherwise
-      #if DEBUG
-        var refreshPropositions: (@escaping (Bool) -> Void) -> Void = { completion in
-          Messaging.updatePropositionsForSurfaces([Surface()], completion)
-        }
-      #else
-        private let refreshPropositions: (@escaping (Bool) -> Void) -> Void = { completion in
-          Messaging.updatePropositionsForSurfaces([Surface()], completion)
-        }
-      #endif
     
     func onReevaluationTriggered(
         event: Event,
         reevaluableRules: [LaunchRule],
-        completion: @escaping () -> Void
+        completion: @escaping (Bool) -> Void
     ) {
-        queue.async { [weak self] in
-            guard let self = self else { return }
-            
-            // If refresh already in progress, queue this completion for later
-            if self.isRefreshInProgress {
-                self.pendingCompletions.append(completion)
-                Log.trace(label: MessagingConstants.LOG_TAG,
-                          "Refresh already in progress, queuing completion handler.")
-                return
-            }
-            
-            // Mark refresh as in progress and add completion to queue
-            self.isRefreshInProgress = true
-            self.pendingCompletions.append(completion)
-            
-            Log.trace(label: MessagingConstants.LOG_TAG,
-                      "Reevaluation triggered for event '\(event.id)' with \(reevaluableRules.count) reevaluable rule(s). Refreshing messages.")
-            
-            Messaging.updatePropositionsForSurfaces([Surface()]) { [weak self] success in
-                self?.queue.async {
-                    guard let self = self else { return }
-                    
-                    let completionsToCall = self.pendingCompletions
-                    self.pendingCompletions = []
-                    self.isRefreshInProgress = false
-                    
-                    if success {
-                        completionsToCall.forEach { $0() }
-                    }
-                }
-            }
-        }
+        Log.trace(label: MessagingConstants.LOG_TAG,
+                  "Reevaluation triggered for event '\(event.id)' with \(reevaluableRules.count) reevaluable rule(s). Refreshing messages.")
+        
+        RefreshInAppHandler.shared.refresh(completion: completion)
     }
 }

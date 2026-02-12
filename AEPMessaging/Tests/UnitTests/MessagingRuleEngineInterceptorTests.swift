@@ -30,6 +30,7 @@ class MessagingRuleEngineInterceptorTests: XCTestCase {
     override func setUp() {
         super.setUp()
         EventHub.shared.start()
+        RefreshInAppHandler.shared.reset()
         interceptor = MessagingRuleEngineInterceptor()
         mockRuntime = TestableExtensionRuntime()
         mockCache = MockCache(name: "mockCache")
@@ -39,6 +40,7 @@ class MessagingRuleEngineInterceptorTests: XCTestCase {
     }
     
     override func tearDown() {
+        RefreshInAppHandler.shared.reset()
         interceptor = nil
         mockRuntime = nil
         mockLaunchRulesEngine = nil
