@@ -600,6 +600,11 @@ public class Messaging: NSObject, Extension {
                 self.requestedSurfacesForEventId.removeValue(forKey: newEvent.id.uuidString)
                 self.eventsQueue.start()
 
+                // Call completion handler with failure so callers know the request failed
+                if let handler = self.completionHandlerFor(edgeRequestEventId: newEvent.id) {
+                    handler.handle?(false)
+                }
+
                 Log.warning(label: MessagingConstants.LOG_TAG, "Unable to run completion logic for a personalization request event - unable to obtain parent event ID")
                 return
             }
