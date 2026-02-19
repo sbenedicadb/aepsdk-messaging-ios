@@ -30,8 +30,8 @@ pod-install:
 	(cd TestApps/$(APP_NAME) && pod install --repo-update)
 
 ci-pod-install:
-	(bundle exec pod install --repo-update)
-	(cd TestApps/$(APP_NAME) && bundle exec pod install --repo-update)
+	(rm -f Podfile.lock && bundle exec pod install --repo-update)
+	(cd TestApps/$(APP_NAME) && rm -f Podfile.lock && bundle exec pod install --repo-update)
 
 pod-update: pod-repo-update
 	(pod update)
