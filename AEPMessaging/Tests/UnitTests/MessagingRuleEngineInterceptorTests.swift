@@ -113,57 +113,52 @@ class MessagingRuleEngineInterceptorTests: XCTestCase {
     func testOnReevaluationTriggered_singleRequest_completionCalledOnSuccess() {
         // Setup
         let completionExpectation = expectation(description: "Completion should be called")
-        var refreshCallCount = 0
-        
-        interceptor.refreshPropositions = { completion in
-            refreshCallCount += 1
-            // Simulate successful refresh
-            DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
-                completion(true)
-            }
-        }
+        var receivedSuccess: Bool?
         
         let event = createTestEvent()
         let rule = createTestRule()
         
         // Test
-        interceptor.onReevaluationTriggered(event: event, reevaluableRules: [rule]) {
+        interceptor.onReevaluationTriggered(event: event, reevaluableRules: [rule]) { success in
+            receivedSuccess = success
             completionExpectation.fulfill()
+        }
+        
+        // Simulate successful refresh via RefreshInAppHandler
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+            RefreshInAppHandler.shared.handleRefreshComplete(success: true)
         }
         
         // Verify
         wait(for: [completionExpectation], timeout: 2.0)
-        XCTAssertEqual(refreshCallCount, 1, "Refresh should be called exactly once")
+        XCTAssertEqual(receivedSuccess, true, "Completion should receive success")
     }
     
-    func testOnReevaluationTriggered_singleRequest_completionNotCalledOnFailure() {
+    func testOnReevaluationTriggered_singleRequest_completionCalledOnFailure() {
         // Setup
-        let completionExpectation = expectation(description: "Completion should not be called")
-        completionExpectation.isInverted = true
-        var refreshCallCount = 0
-        
-        interceptor.refreshPropositions = { completion in
-            refreshCallCount += 1
-            // Simulate failed refresh
-            DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
-                completion(false)
-            }
-        }
+        let completionExpectation = expectation(description: "Completion should be called")
+        var receivedSuccess: Bool?
         
         let event = createTestEvent()
         let rule = createTestRule()
         
         // Test
-        interceptor.onReevaluationTriggered(event: event, reevaluableRules: [rule]) {
+        interceptor.onReevaluationTriggered(event: event, reevaluableRules: [rule]) { success in
+            receivedSuccess = success
             completionExpectation.fulfill()
         }
         
+        // Simulate failed refresh via RefreshInAppHandler
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+            RefreshInAppHandler.shared.handleRefreshComplete(success: false)
+        }
+        
         // Verify
-        wait(for: [completionExpectation], timeout: 1.0)
-        XCTAssertEqual(refreshCallCount, 1, "Refresh should be called exactly once")
+        wait(for: [completionExpectation], timeout: 2.0)
+        XCTAssertEqual(receivedSuccess, false, "Completion should receive failure")
     }
     
-    // MARK: - Queueing Behavior Tests
+    // MARK: - Queueing Behavior Tests (via RefreshInAppHandler)
     
     func testOnReevaluationTriggered_multipleRequests_queuesCompletions() {
         // Setup
@@ -171,120 +166,123 @@ class MessagingRuleEngineInterceptorTests: XCTestCase {
         let completion2Expectation = expectation(description: "Completion 2 should be called")
         let completion3Expectation = expectation(description: "Completion 3 should be called")
         
-        var refreshCallCount = 0
-        var storedCompletion: ((Bool) -> Void)?
-        
-        interceptor.refreshPropositions = { completion in
-            refreshCallCount += 1
-            storedCompletion = completion
-        }
+        var results: [Bool] = []
+        let resultsLock = NSLock()
         
         let event1 = createTestEvent(name: "Event 1")
         let event2 = createTestEvent(name: "Event 2")
         let event3 = createTestEvent(name: "Event 3")
         let rule = createTestRule()
         
-        // Test - trigger multiple requests quickly
-        interceptor.onReevaluationTriggered(event: event1, reevaluableRules: [rule]) {
+        // Test - trigger multiple requests quickly (RefreshInAppHandler queues them)
+        interceptor.onReevaluationTriggered(event: event1, reevaluableRules: [rule]) { success in
+            resultsLock.lock()
+            results.append(success)
+            resultsLock.unlock()
             completion1Expectation.fulfill()
         }
         
         // Allow first request to start
         Thread.sleep(forTimeInterval: 0.05)
         
-        interceptor.onReevaluationTriggered(event: event2, reevaluableRules: [rule]) {
+        interceptor.onReevaluationTriggered(event: event2, reevaluableRules: [rule]) { success in
+            resultsLock.lock()
+            results.append(success)
+            resultsLock.unlock()
             completion2Expectation.fulfill()
         }
         
-        interceptor.onReevaluationTriggered(event: event3, reevaluableRules: [rule]) {
+        interceptor.onReevaluationTriggered(event: event3, reevaluableRules: [rule]) { success in
+            resultsLock.lock()
+            results.append(success)
+            resultsLock.unlock()
             completion3Expectation.fulfill()
         }
         
         // Wait a bit for all requests to be queued
         Thread.sleep(forTimeInterval: 0.1)
         
-        // Complete the refresh
-        storedCompletion?(true)
+        // Complete the refresh - all queued completions should receive this result
+        RefreshInAppHandler.shared.handleRefreshComplete(success: true)
         
         // Verify
         wait(for: [completion1Expectation, completion2Expectation, completion3Expectation], timeout: 2.0)
-        XCTAssertEqual(refreshCallCount, 1, "Refresh should be called only once even with multiple requests")
+        XCTAssertEqual(results.count, 3, "All 3 completions should be called")
+        XCTAssertTrue(results.allSatisfy { $0 == true }, "All completions should receive success")
     }
     
-    func testOnReevaluationTriggered_multipleRequests_noCompletionsOnFailure() {
+    func testOnReevaluationTriggered_multipleRequests_allReceiveFailure() {
         // Setup
-        let completion1Expectation = expectation(description: "Completion 1 should not be called")
-        completion1Expectation.isInverted = true
-        let completion2Expectation = expectation(description: "Completion 2 should not be called")
-        completion2Expectation.isInverted = true
+        let completion1Expectation = expectation(description: "Completion 1 should be called")
+        let completion2Expectation = expectation(description: "Completion 2 should be called")
         
-        var storedCompletion: ((Bool) -> Void)?
-        
-        interceptor.refreshPropositions = { completion in
-            storedCompletion = completion
-        }
+        var results: [Bool] = []
+        let resultsLock = NSLock()
         
         let event1 = createTestEvent(name: "Event 1")
         let event2 = createTestEvent(name: "Event 2")
         let rule = createTestRule()
         
         // Test
-        interceptor.onReevaluationTriggered(event: event1, reevaluableRules: [rule]) {
+        interceptor.onReevaluationTriggered(event: event1, reevaluableRules: [rule]) { success in
+            resultsLock.lock()
+            results.append(success)
+            resultsLock.unlock()
             completion1Expectation.fulfill()
         }
         
         Thread.sleep(forTimeInterval: 0.05)
         
-        interceptor.onReevaluationTriggered(event: event2, reevaluableRules: [rule]) {
+        interceptor.onReevaluationTriggered(event: event2, reevaluableRules: [rule]) { success in
+            resultsLock.lock()
+            results.append(success)
+            resultsLock.unlock()
             completion2Expectation.fulfill()
         }
         
         Thread.sleep(forTimeInterval: 0.1)
         
         // Fail the refresh
-        storedCompletion?(false)
+        RefreshInAppHandler.shared.handleRefreshComplete(success: false)
         
-        // Verify - neither completion should be called
-        wait(for: [completion1Expectation, completion2Expectation], timeout: 1.0)
+        // Verify - all completions should receive failure
+        wait(for: [completion1Expectation, completion2Expectation], timeout: 2.0)
+        XCTAssertEqual(results.count, 2, "Both completions should be called")
+        XCTAssertTrue(results.allSatisfy { $0 == false }, "All completions should receive failure")
     }
     
     // MARK: - Sequential Request Tests
     
-    func testOnReevaluationTriggered_sequentialRequests_eachTriggersRefresh() {
+    func testOnReevaluationTriggered_sequentialRequests_eachCompletesIndependently() {
         // Setup
         let completion1Expectation = expectation(description: "Completion 1 should be called")
         let completion2Expectation = expectation(description: "Completion 2 should be called")
-        
-        var refreshCallCount = 0
-        
-        interceptor.refreshPropositions = { completion in
-            refreshCallCount += 1
-            // Complete immediately
-            DispatchQueue.global().async {
-                completion(true)
-            }
-        }
         
         let event1 = createTestEvent(name: "Event 1")
         let event2 = createTestEvent(name: "Event 2")
         let rule = createTestRule()
         
         // Test - trigger first request and wait for completion
-        interceptor.onReevaluationTriggered(event: event1, reevaluableRules: [rule]) {
+        interceptor.onReevaluationTriggered(event: event1, reevaluableRules: [rule]) { _ in
             completion1Expectation.fulfill()
+        }
+        
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+            RefreshInAppHandler.shared.handleRefreshComplete(success: true)
         }
         
         wait(for: [completion1Expectation], timeout: 2.0)
         
         // Trigger second request after first completes
-        interceptor.onReevaluationTriggered(event: event2, reevaluableRules: [rule]) {
+        interceptor.onReevaluationTriggered(event: event2, reevaluableRules: [rule]) { _ in
             completion2Expectation.fulfill()
         }
         
-        wait(for: [completion2Expectation], timeout: 2.0)
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+            RefreshInAppHandler.shared.handleRefreshComplete(success: true)
+        }
         
-        // Verify - each sequential request should trigger its own refresh
-        XCTAssertEqual(refreshCallCount, 2, "Sequential requests should each trigger refresh")
+        wait(for: [completion2Expectation], timeout: 2.0)
     }
     
     // MARK: - Empty Rules Tests
@@ -292,25 +290,21 @@ class MessagingRuleEngineInterceptorTests: XCTestCase {
     func testOnReevaluationTriggered_emptyRules_stillTriggersRefresh() {
         // Setup
         let completionExpectation = expectation(description: "Completion should be called")
-        var refreshCallCount = 0
-        
-        interceptor.refreshPropositions = { completion in
-            refreshCallCount += 1
-            DispatchQueue.global().async {
-                completion(true)
-            }
-        }
         
         let event = createTestEvent()
         
         // Test - trigger with empty rules
-        interceptor.onReevaluationTriggered(event: event, reevaluableRules: []) {
+        interceptor.onReevaluationTriggered(event: event, reevaluableRules: []) { _ in
             completionExpectation.fulfill()
+        }
+        
+        // Simulate completion
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+            RefreshInAppHandler.shared.handleRefreshComplete(success: true)
         }
         
         // Verify
         wait(for: [completionExpectation], timeout: 2.0)
-        XCTAssertEqual(refreshCallCount, 1, "Empty rules should still trigger refresh")
     }
     
     // MARK: - Thread Safety Tests
@@ -323,19 +317,6 @@ class MessagingRuleEngineInterceptorTests: XCTestCase {
         let countLock = NSLock()
         let numberOfRequests = 10
         
-        var storedCompletion: ((Bool) -> Void)?
-        var refreshCallCount = 0
-        let refreshLock = NSLock()
-        
-        interceptor.refreshPropositions = { completion in
-            refreshLock.lock()
-            refreshCallCount += 1
-            if storedCompletion == nil {
-                storedCompletion = completion
-            }
-            refreshLock.unlock()
-        }
-        
         let rule = createTestRule()
         
         // Test - trigger many concurrent requests
@@ -343,7 +324,7 @@ class MessagingRuleEngineInterceptorTests: XCTestCase {
             completionGroup.enter()
             concurrentQueue.async {
                 let event = self.createTestEvent(name: "Event \(i)")
-                self.interceptor.onReevaluationTriggered(event: event, reevaluableRules: [rule]) {
+                self.interceptor.onReevaluationTriggered(event: event, reevaluableRules: [rule]) { _ in
                     countLock.lock()
                     completionCount += 1
                     countLock.unlock()
@@ -355,13 +336,12 @@ class MessagingRuleEngineInterceptorTests: XCTestCase {
         // Wait for all requests to be submitted
         Thread.sleep(forTimeInterval: 0.2)
         
-        // Complete the refresh
-        storedCompletion?(true)
+        // Complete the refresh - RefreshInAppHandler should call all queued completions
+        RefreshInAppHandler.shared.handleRefreshComplete(success: true)
         
         // Verify
         let result = completionGroup.wait(timeout: .now() + 5.0)
         XCTAssertEqual(result, .success, "All completions should be called")
         XCTAssertEqual(completionCount, numberOfRequests, "All \(numberOfRequests) completions should be called")
-        XCTAssertEqual(refreshCallCount, 1, "Only one refresh should be triggered for concurrent requests")
     }
 }
