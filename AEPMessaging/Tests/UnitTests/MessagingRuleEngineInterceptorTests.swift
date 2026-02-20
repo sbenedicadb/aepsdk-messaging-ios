@@ -67,13 +67,13 @@ class MessagingRuleEngineInterceptorTests: XCTestCase {
     
     func testMessagingInit_registersReevaluationInterceptor() {
         // Setup & Test
-        let messagingProperties = MessagingProperties()
+        let stateManager = MessagingStateManager()
         messaging = Messaging(runtime: mockRuntime,
                              rulesEngine: mockMessagingRulesEngine,
                              contentCardRulesEngine: mockContentCardRulesEngine,
                              expectedSurfaceUri: "mobileapp://test",
                              cache: mockCache,
-                             messagingProperties: messagingProperties)
+                             stateManager: stateManager)
         
         // Verify - the interceptor should be set on the launch rules engine
         XCTAssertTrue(mockLaunchRulesEngine.setReevaluationInterceptorCalled,
@@ -84,13 +84,13 @@ class MessagingRuleEngineInterceptorTests: XCTestCase {
     
     func testMessagingInit_interceptorIsCorrectType() {
         // Setup & Test
-        let messagingProperties = MessagingProperties()
+        let stateManager = MessagingStateManager()
         messaging = Messaging(runtime: mockRuntime,
                              rulesEngine: mockMessagingRulesEngine,
                              contentCardRulesEngine: mockContentCardRulesEngine,
                              expectedSurfaceUri: "mobileapp://test",
                              cache: mockCache,
-                             messagingProperties: messagingProperties)
+                             stateManager: stateManager)
         
         // Verify
         guard let interceptor = mockLaunchRulesEngine.paramReevaluationInterceptor else {
