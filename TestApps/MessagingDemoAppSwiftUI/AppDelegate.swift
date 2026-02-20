@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import AEPAssurance
 import AEPCore
 import AEPEdge
-//import AEPEdgeConsent
+import AEPEdgeConsent
 import AEPEdgeIdentity
 import AEPLifecycle
 import AEPSignal
@@ -29,9 +29,10 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
             Lifecycle.self,
             Signal.self,
             Edge.self,
-//            Consent.self,
+            Consent.self,
             Messaging.self,
-            Assurance.self
+            Assurance.self,
+            TokenCollector.self
         ]
         
         MobileCore.registerExtensions(extensions) {
@@ -56,6 +57,14 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
             Messaging.updatePropositionsForSurfaces([cardSurface,cbeSurface1, cbeSurface2])
         }
         
+        if #available(iOS 16.1, *) {
+            Messaging.registerLiveActivities([
+                AirplaneTrackingAttributes.self,
+                FoodDeliveryLiveActivityAttributes.self,
+                GameScoreLiveActivityAttributes.self
+            ])
+        }
+        
         return true
     }
         
@@ -78,6 +87,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
         let token = tokenParts.joined()
         print("Device token is - \(token)")
+        UserDefaults.standard.set(token, forKey: "devicePushToken")
         MobileCore.setPushIdentifier(deviceToken)
     }
 
