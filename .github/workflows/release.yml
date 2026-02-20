@@ -107,18 +107,18 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Publish Pods - AEPMessaging
-      if: ${{ github.event.inputs.release_AEPMessaging == 'yes' }}
-      run: |
-        set -eo pipefail
-        pod trunk push AEPMessaging.podspec --allow-warnings --synchronous
-      env:
-        COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
-
     - name: Publish Pods - AEPMessagingLiveActivity
       if: ${{ github.event.inputs.release_AEPMessagingLiveActivity == 'yes' }}
       run: |
         set -eo pipefail
         pod trunk push AEPMessagingLiveActivity.podspec --allow-warnings --synchronous
+      env:
+        COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+
+    - name: Publish Pods - AEPMessaging
+      if: ${{ github.event.inputs.release_AEPMessaging == 'yes' }}
+      run: |
+        set -eo pipefail
+        pod trunk push AEPMessaging.podspec --allow-warnings --synchronous
       env:
         COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
