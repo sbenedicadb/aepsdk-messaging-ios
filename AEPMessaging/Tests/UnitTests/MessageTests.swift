@@ -508,6 +508,61 @@ class MessageTests: XCTestCase {
 //        XCTAssertEqual("iam.id", eventHistoryEvent?.mask?[1])
 //        XCTAssertEqual("iam.action", eventHistoryEvent?.mask?[2])
     }
+    
+    func testRecordDisplayWithPropositionInfo() throws {
+        // setup
+        mockPropositionItem = PropositionItem(itemId: "itemId", schema: .inapp, itemData: mockInAppItemData)
+        guard let message = Message.fromPropositionItem(mockPropositionItem, with: mockMessaging, triggeringEvent: mockEvent) else {
+            XCTFail("failed to create message from convenience constructor.")
+            return
+        }
+        message.propositionInfo = mockPropositionInfo
+        
+        let eventHistoryExpectation = XCTestExpectation(description: "event history write event dispatched")
+        var capturedEvent: Event?
+        MobileCore.registerEventListener(type: EventType.messaging, source: MessagingConstants.Event.Source.EVENT_HISTORY_WRITE) { event in
+            capturedEvent = event
+            eventHistoryExpectation.fulfill()
+        }
+
+        // test
+        message.recordDisplay()
+
+        // verify
+        wait(for: [eventHistoryExpectation], timeout: ASYNC_TIMEOUT)
+        
+        XCTAssertNotNil(capturedEvent)
+        XCTAssertEqual(MessagingConstants.Event.Name.EVENT_HISTORY_WRITE, capturedEvent?.name)
+        
+        let eventData = capturedEvent?.data
+        let iamHistory = eventData?[MessagingConstants.Event.Data.Key.IAM_HISTORY] as? [String: String]
+        XCTAssertNotNil(iamHistory)
+        XCTAssertEqual("display", iamHistory?[MessagingConstants.Event.History.Keys.EVENT_TYPE])
+        XCTAssertEqual(mockPropositionInfo.activityId, iamHistory?[MessagingConstants.Event.History.Keys.MESSAGE_ID])
+        XCTAssertEqual("", iamHistory?[MessagingConstants.Event.History.Keys.TRACKING_ACTION])
+    }
+    
+    func testRecordDisplayWithoutPropositionInfo() throws {
+        // setup
+        mockPropositionItem = PropositionItem(itemId: "itemId", schema: .inapp, itemData: mockInAppItemData)
+        guard let message = Message.fromPropositionItem(mockPropositionItem, with: mockMessaging, triggeringEvent: mockEvent) else {
+            XCTFail("failed to create message from convenience constructor.")
+            return
+        }
+        // intentionally not setting propositionInfo
+        
+        let eventHistoryExpectation = XCTestExpectation(description: "event history write event should NOT be dispatched")
+        eventHistoryExpectation.isInverted = true
+        MobileCore.registerEventListener(type: EventType.messaging, source: MessagingConstants.Event.Source.EVENT_HISTORY_WRITE) { _ in
+            eventHistoryExpectation.fulfill()
+        }
+
+        // test
+        message.recordDisplay()
+
+        // verify - no event should be dispatched when propositionInfo is nil
+        wait(for: [eventHistoryExpectation], timeout: ASYNC_TIMEOUT)
+    }
 }
 
 extension MessageTests: FullscreenMessageDelegate {
