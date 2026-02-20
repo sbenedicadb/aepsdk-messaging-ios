@@ -76,7 +76,7 @@ class MessagingNotificationTrackingTests: TestBase, AnyCodableAsserts {
         FileManager.default.clearDirectory()
 
         // hub shared state update for 1 extension versions (InstrumentedExtension (registered in FunctionalTestBase), IdentityEdge, Edge Identity, Config
-        setExpectationEvent(type: EventType.hub, source: EventSource.sharedState, expectedCount: 3)
+        setExpectationEvent(type: EventType.hub, source: EventSource.sharedState, expectedCount: 4)
         
         // expectations for update config request&response events
         setExpectationEvent(type: EventType.configuration, source: EventSource.requestContent, expectedCount: 1)
@@ -138,7 +138,7 @@ class MessagingNotificationTrackingTests: TestBase, AnyCodableAsserts {
         
         // verify push tracking information
         // verify cjm/mixins and other xdm related data
-        let expectedJSON = #"""
+        let expectedJSON = """
         {
           "meta": {
             "collect": {
@@ -176,8 +176,8 @@ class MessagingNotificationTrackingTests: TestBase, AnyCodableAsserts {
             }
           }
         }
-        """#
-        assertExactMatch(expected: expectedJSON.toAnyCodable()!, actual: edgeEvent.toAnyCodable(), pathOptions: [])
+        """
+        assertExactMatch(expected: expectedJSON, actual: edgeEvent)
     }
     
     func test_notificationTracking_whenUser_DismissesNotification() {
@@ -194,7 +194,7 @@ class MessagingNotificationTrackingTests: TestBase, AnyCodableAsserts {
         let edgeEvent = events.first!
         
         // verify push tracking information
-        let expectedJSON = #"""
+        let expectedJSON = """
         {
           "xdm" : {
             "pushNotificationTracking" : {
@@ -210,8 +210,8 @@ class MessagingNotificationTrackingTests: TestBase, AnyCodableAsserts {
             }
           }
         }
-        """#
-        assertExactMatch(expected: expectedJSON.toAnyCodable()!, actual: edgeEvent.toAnyCodable(), pathOptions: [])
+        """
+        assertExactMatch(expected: expectedJSON, actual: edgeEvent)
     }
     
     func test_notificationTracking_whenUser_tapsNotificationActionThatOpensTheApp() {
@@ -228,7 +228,7 @@ class MessagingNotificationTrackingTests: TestBase, AnyCodableAsserts {
         let edgeEvent = events.first!
         
         // verify push tracking information
-        let expectedJSON = #"""
+        let expectedJSON = """
         {
           "xdm": {
             "application": {
@@ -244,9 +244,9 @@ class MessagingNotificationTrackingTests: TestBase, AnyCodableAsserts {
             }
           }
         }
-        """#
+        """
         
-        assertExactMatch(expected: expectedJSON.toAnyCodable()!, actual: edgeEvent.toAnyCodable(), pathOptions: [])
+        assertExactMatch(expected: expectedJSON, actual: edgeEvent)
     }
     
     func test_notificationOpen_whenNotAJONotification() {
@@ -309,7 +309,7 @@ class MessagingNotificationTrackingTests: TestBase, AnyCodableAsserts {
         let edgeEvent = events.first!
         
         // verify push tracking information
-        let expectedJSON = #"""
+        let expectedJSON = """
         {
           "xdm": {
             "application": {
@@ -325,9 +325,9 @@ class MessagingNotificationTrackingTests: TestBase, AnyCodableAsserts {
             }
           }
         }
-        """#
+        """
         
-        assertExactMatch(expected: expectedJSON.toAnyCodable()!, actual: edgeEvent.toAnyCodable(), pathOptions: [])
+        assertExactMatch(expected: expectedJSON, actual: edgeEvent)
     }
     
     func test_notificationTracking_whenUser_tapsNotificationActionThatDoNotOpenTheApp_Case2() {
@@ -345,7 +345,7 @@ class MessagingNotificationTrackingTests: TestBase, AnyCodableAsserts {
         let edgeEvent = events.first!
         
         // verify push tracking information
-        let expectedJSON = #"""
+        let expectedJSON = """
         {
           "xdm": {
             "application": {
@@ -361,9 +361,9 @@ class MessagingNotificationTrackingTests: TestBase, AnyCodableAsserts {
             }
           }
         }
-        """#
+        """
         
-        assertExactMatch(expected: expectedJSON.toAnyCodable()!, actual: edgeEvent.toAnyCodable(), pathOptions: [])
+        assertExactMatch(expected: expectedJSON, actual: edgeEvent)
     }
     
     func test_notificationOpen_willLaunchUrl() {
@@ -381,15 +381,15 @@ class MessagingNotificationTrackingTests: TestBase, AnyCodableAsserts {
         let messagingEvent = events.first!
         
         // verify push tracking information
-        let expectedJSON = #"""
+        let expectedJSON = """
         {
           "applicationOpened": true,
           "clickThroughUrl": "https://google.com",
           "eventType": "pushTracking.applicationOpened"
         }
-        """#
+        """
         
-        assertExactMatch(expected: expectedJSON.toAnyCodable()!, actual: messagingEvent.toAnyCodable(), pathOptions: [])
+        assertExactMatch(expected: expectedJSON, actual: messagingEvent)
     }
     
     func test_notificationCustomAction_willNotLaunchUrl() {
