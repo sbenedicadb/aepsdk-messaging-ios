@@ -8,7 +8,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.adobe.MessagingDemoAppSwiftUI</string>
+			<string>com.adobe.Messaging.TestApp</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>messagingdemo</string>
@@ -20,6 +20,10 @@
 		<string>fetch</string>
 		<string>remote-notification</string>
 		<string>processing</string>
+	</array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.adobe.Messaging.TestApp.refresh</string>
 	</array>
 </dict>
 </plist>

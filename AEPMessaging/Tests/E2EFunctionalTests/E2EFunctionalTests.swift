@@ -44,6 +44,7 @@ class E2EFunctionalTests: XCTestCase, AnyCodableAsserts {
     override func setUp() {
         mockCache = MockCache(name: "mockCache")
         mockRuntime = TestableExtensionRuntime()
+        RefreshInAppHandler.shared.reset()
     }
     
     /// after each
