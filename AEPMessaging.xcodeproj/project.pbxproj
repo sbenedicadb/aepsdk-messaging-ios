@@ -321,7 +321,6 @@
 		B6E63D042A9EC71C007BB586 /* PushTrackingStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E63D032A9EC71C007BB586 /* PushTrackingStatusTests.swift */; };
 		B6F795E22DD30238004478B4 /* LiveActivityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F795E12DD30238004478B4 /* LiveActivityTests.swift */; };
 		B6F796552DD41330004478B4 /* AEPMessagingLiveActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B61BDACE2DA5E861007FE12E /* AEPMessagingLiveActivity.framework */; };
-		B6F796562DD41330004478B4 /* AEPMessagingLiveActivity.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B61BDACE2DA5E861007FE12E /* AEPMessagingLiveActivity.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B6F796702DD51330004478B7 /* AEPMessagingLiveActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B61BDACE2DA5E861007FE12E /* AEPMessagingLiveActivity.framework */; };
 		B6F796712DD51330004478B7 /* AEPMessagingLiveActivity.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B61BDACE2DA5E861007FE12E /* AEPMessagingLiveActivity.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B6F7CBC92CC2089A00C35C64 /* DismissButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F7CBA72CC2089A00C35C64 /* DismissButtonStyle.swift */; };
@@ -3883,7 +3882,7 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.MessagingDemoApp.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.MessagingDemoApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3906,7 +3905,7 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.MessagingDemoApp.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.MessagingDemoApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -4309,7 +4308,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.MessagingDemoApp.dev.NotificationService;
+				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.MessagingDemoApp.NotificationService;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -4336,7 +4335,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.MessagingDemoApp.dev.NotificationService;
+				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.MessagingDemoApp.NotificationService;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
